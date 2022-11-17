@@ -1,0 +1,18 @@
+{{template "base" .}} <!-- using the base layout template-->
+
+{{define "content"}}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1>this is my reservation page</h1>
+        <p>here is some text</p>
+
+        <!--pulling data from the handler to the template-->
+        <!--using the function index and looking for StringMap and then (.) means all the data that is passed to
+        template and also looking for a particular element (index = "")-->
+        <h2>this is coming from the handler: {{index .StringMap "test"}}</h2>
+      </div>
+    </div>
+  </div>
+
+{{end}}
