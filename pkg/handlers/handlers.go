@@ -41,13 +41,13 @@ func NewHandlers(r *Repository) {
 //Home create the home page handler function
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, "home.page.html", &models.TemplateData{})
+	renders.RenderTemplate(w, "home.page.tmpl", &models.TemplateData{})
 }
 
 //About create the about page handler function
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, "about.page.html", &models.TemplateData{})
+	renders.RenderTemplate(w, "about.page.tmpl", &models.TemplateData{})
 
 }
 
@@ -58,7 +58,7 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	stringMap["test"] = "hello again, says by kareem"
 
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, "reservation.page.html", &models.TemplateData{
+	renders.RenderTemplate(w, "reservation.page.tmpl", &models.TemplateData{
 		//send data to the template
 		StringMap: stringMap,
 	})

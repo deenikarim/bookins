@@ -43,7 +43,7 @@ func AddDefaultData(td *models.TemplateData) *models.TemplateData {
 //RenderTemplate a function for rendering templates
 //what the function does is that it take a respondWriter and the name of a template you want to parse and read
 // it to the browser
-func RenderTemplate(w http.ResponseWriter, html string, td *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
 
 	// get the template cache
 	/*tc, err := CreateTemplateCache()
@@ -60,7 +60,7 @@ func RenderTemplate(w http.ResponseWriter, html string, td *models.TemplateData)
 	}
 
 	//get the individual templates from the myCache variable
-	t, ok := tc[html]
+	t, ok := tc[tmpl]
 	if !ok {
 		log.Fatal("can not fetch the individual template")
 	}
