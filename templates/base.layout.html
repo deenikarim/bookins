@@ -1,35 +1,316 @@
   {{define "base"}}
-  <!doctype html>
-  <html lang="en">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet"
-          integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+    <!DOCTYPE html>
+    <html lang="en">
 
-    <!--styles specific for different pages section -->
-      {{block "css" .}}
+    <head>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>My page</title>
+      <!-- Bootstrap CSS -->
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" i
+            ntegrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+      <!--vanilla datepicker-->
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.2.0/dist/css/datepicker-bs5.min.css">
+      <!-- notie alert-->
+      <link rel="stylesheet" type="text/css" href="https://unpkg.com/notie/dist/notie.min.css">
+      <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+
+    </head>
+
+    <body>
+    <!--Navigation bar-->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container-fluid">
+        <a class="navbar-brand" href="#">Navbar</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent"
+                aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item">
+              <a class="nav-link active" aria-current="page" href="/">Home</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/about">About</a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Rooms
+              </a>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="/generals-quarters">General's Quarters</a></li>
+                <li><a class="dropdown-item" href="/majors-suite">Major's Suite</a></li>
+              </ul>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/search-availability" tabindex="-1" aria-disabled="true">Book Now</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/contact" tabindex="-1" aria-disabled="true">Contact Us</a>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+    <!--********************************************************************************************-->
 
 
-      {{end}}
-  </head>
-  <body>
-  <!-- *define a section*-->
+    <!-- *define a section*-->
   <!--* it tell golang that the content in this block will change per template basis *-->
     {{block "content" .}}
 
 
     {{end}}
 
-  <!-- js code specific for different pages-->
+
+    <!--creating our footer-->
+    <div class="row my-footer">
+      <div class="col">
+        left
+      </div>
+      <div class="col">
+        middle
+      </div>
+      <div class="col">
+        right
+      </div>
+    </div>
+
+
+
+    <!--js styles-->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous">
+    </script>
+    <!--vanilla datepicker-->
+    <script src="https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.2.0/dist/js/datepicker-full.min.js"></script>
+    <!-- Bottom notie in the body -->
+    <script src="https://unpkg.com/notie"></script>
+    <!-- Bottom sweetalert2 in the body -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <!-- js code specific for different pages-->
     {{block "js" .}}
 
 
     {{end}}
-  </body>
-  </html>
+
+    <!--JAVASCRIPT CODE-->
+    <script>
+
+
+      //MAKING THE MODULE AVAILABLE TO MY CODE
+      let attention = prompt();
+
+
+      //VALIDATION
+      // Example starter JavaScript for disabling form submissions if there are invalid fields
+      (function () {
+        'use strict';
+        window.addEventListener('load', function () {
+          // Fetch all the forms we want to apply custom Bootstrap validation styles to
+          let forms = document.getElementsByClassName('needs-validation');
+          // Loop over them and prevent submission
+          Array.prototype.filter.call(forms, function (form) {
+            form.addEventListener('submit', function (event) {
+              if (form.checkValidity() === false) {
+                event.preventDefault();
+                event.stopPropagation();
+              }
+              form.classList.add('was-validated');
+            }, false);
+          });
+        }, false);
+      })();
+
+
+      // for the colorButton
+      document.getElementById('colorButton').addEventListener('click', function () {
+        //use the notify function created in the script tags
+        ////notify("text is a message", "warning")
+
+        ////notifyModal("success", "<em> congratulation success</em>", "success", "cool")
+        //attention.toast({msg: "successful in signing"});
+        //attention.success({});
+        ///attention.toast({});
+
+        let html = `
+            <form action = " " method = "post" class="needs-validation" novalidate id="check-availability-form">
+                <div class="form-row">
+                  <div class="col">
+                    <div class="row g-3" id="reservation-dates-modal">
+
+                      <div class="col">
+                        <input type="text" name="start" id ="start" class="form-control" required disabled placeholder="Arrival">
+                      </div>
+
+                      <div class="col">
+                        <input type="text" name="end" id = "end" class="form-control" required disabled placeholder="Departure">
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+            </form>
+            `
+        attention.custom({ msg: html, title: "choose your dates" });
+
+
+
+      })
+
+
+      //for vanilla datepicker
+      const elem = document.getElementById('reservation-dates');
+      const rangepicker = new DateRangePicker(elem, {
+        clearBtn: true,
+        todayHighlight: true,
+      });
+
+
+      //alert function is for displaying Notie alert to clients
+      function notify(msg, msgType) {
+        notie.alert({
+          type: msgType, // optional, default = 4, enum: [1, 2, 3, 4, 5, 'success', 'warning', 'error', 'info', 'neutral']
+          text: msg,
+          // stay: Boolean, // optional, default = false
+          //time: Number, // optional, default = 3, minimum = 1,
+          // position: String // optional, default = 'top', enum: ['top', 'bottom']
+        })
+      }
+
+      //notifyModal function is for displaying sweetalert message to users
+      function notifyModal(title, text, icon, confirmButtonText) {
+        Swal.fire({
+          title: title,
+          html: text,
+          icon: icon,
+          confirmButtonText: confirmButtonText
+        })
+      }
+
+
+
+      //DEMONSTRATING HOW JAVASCRIPT MODULES WORK
+      function prompt() {
+        //CREATING TOAST ALERT
+        let toast = function (c) {
+          //parameter "c" will be overwritten by the values in the const assigned to "c"
+          const {
+            msg = "Signed in successfully", //default values if not specified
+            icon = "success",
+            position = "top-end",
+          } = c;
+
+          const Toast = Swal.mixin({
+            toast: true,
+            position: position,
+            title: msg,
+            icon: icon,
+            showConfirmButton: false,
+            timer: 3000,
+            timerProgressBar: true,
+            didOpen: (toast) => {
+              toast.addEventListener('mouseenter', Swal.stopTimer)
+              toast.addEventListener('mouseleave', Swal.resumeTimer)
+            }
+          })
+          Toast.fire({}) //firing the sweetalert
+        }
+        //*****************************************************
+
+        //CREATING SUCCESS ALERT
+        let success = function (c) {
+          const {
+            icon = "success",
+            msg = "",
+            title = "",
+            footer = "",
+
+          } = c;
+          Swal.fire({
+            icon: icon,
+            title: title,
+            text: msg,
+            footer: footer,
+          })
+        }
+
+        //CREATING THE ERROR ALERT
+        let error = function (c) {
+          const {
+            icon = "error",
+            msg = "",
+            title = "",
+            footer = "",
+
+          } = c;
+          Swal.fire({
+            icon: icon,
+            title: title,
+            text: msg,
+            footer: footer,
+          })
+        }
+
+        //CREATING MULTIPLE INPUTS: FOR ARRIVAL AND DEPARTURE DATES FOR USERS, IT USES SWEETALERT IN MAJORS AND GENERAL PAGES
+        async function custom(c) {
+          const {
+            msg = "",
+            title = "",
+            position = "center",
+          } = c;
+
+          /*whatever is put into the form and do something with it*/
+          const { value: formValues } = await Swal.fire({
+            title: title,
+            position: position,
+            html: msg,
+            backdrop: false,
+            focusConfirm: false,
+            showCancelButton: true,
+            //before it opens its going to show the datepicker
+            willOpen: () => {
+              const elem = document.getElementById('reservation-dates-modal');
+              const rangepicke = new DateRangePicker(elem, {
+                clearBtn: true,
+                todayHighlight: true,
+              })
+            },
+            preConfirm: () => {
+              //shows what was entered by the user
+
+              return [
+                document.getElementById('start').value,
+                document.getElementById('end').value
+              ]
+            },
+            //after it is opens its going to remove the disabled attribute on the input element
+            didOpen: () => {
+              document.getElementById('start').removeAttribute('disabled');
+              document.getElementById('end').removeAttribute('disabled');
+            }
+          })
+          if (formValues) {
+            Swal.fire(JSON.stringify(formValues))
+          }
+        }
+
+        return {
+          toast: toast, //if there is a request for toast, return the variable holding the function toast
+          success: success,
+          error: error,
+          custom: custom,
+        }
+
+      }
+
+    </script>
+    </body>
+
+    </html>
 
   {{end}}

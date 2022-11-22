@@ -51,6 +51,34 @@ func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 
 }
 
+//Contact create the Contact us page handler function
+func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
+	//calling the renderTemplate function inside the handler function to render the home page to the browser
+	renders.RenderTemplate(w, "contact.page.html", &models.TemplateData{})
+
+}
+
+//Generals create the generals page handler function
+func (m *Repository) Generals(w http.ResponseWriter, r *http.Request) {
+	//calling the renderTemplate function inside the handler function to render the home page to the browser
+	renders.RenderTemplate(w, "generals.page.html", &models.TemplateData{})
+
+}
+
+//Majors create the Majors page handler function
+func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
+	//calling the renderTemplate function inside the handler function to render the home page to the browser
+	renders.RenderTemplate(w, "majors.page.html", &models.TemplateData{})
+
+}
+
+//SearchAvailability create the SearchAvailability page handler function
+func (m *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
+	//calling the renderTemplate function inside the handler function to render the home page to the browser
+	renders.RenderTemplate(w, "search-availability.page.html", &models.TemplateData{})
+
+}
+
 //Reservation create the reservation page handler function
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	//perform some logic
@@ -58,7 +86,7 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	stringMap["test"] = "hello again, says by kareem"
 
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, "reservation.page.html", &models.TemplateData{
+	renders.RenderTemplate(w, "make-reservation.page.html", &models.TemplateData{
 		//send data to the template
 		StringMap: stringMap,
 	})

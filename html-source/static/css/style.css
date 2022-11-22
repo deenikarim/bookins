@@ -1,0 +1,27 @@
+.my-footer {
+    background-color: #163b65;
+    margin-top: 2em;
+    height: 5em;
+    padding: 1em;
+    color: #FFFFFF;
+    font-size: 80%;
+}
+
+.redText {
+    color: red;
+}
+
+.room-width {
+    max-width: 50%;
+}
+
+/* override styles in the notie alert */
+.notie-container {
+    box-shadow: none;
+}
+
+
+.datepicker {
+    z-index: 10000;
+
+}
