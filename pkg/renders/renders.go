@@ -89,7 +89,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 	myCache := map[string]*template.Template{} //produces a safe html document fragment
 
 	//1.2: find all the necessary pages in the template folder
-	//Glob function returns the names of all files matching a pattern of nil if there is no match files
+	//Glob function returns the names of all files matching a pattern or nil if there is no match files
 	pages, err := filepath.Glob("./templates/*.page.html")
 	//checking for error because Glob function also returns an error if it finds no files
 	if err != nil {
@@ -108,7 +108,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		//now with the actual names of the pages, lets create a template set
 		//create a template set
 		ts, err := template.New(name).Funcs(functions).ParseFiles(page)
-		//New(name): allocate a new html template with the given
+		//New(name): allocate a new html template with the given name
 		//ParseFiles(page): parse the named files and associate the resulting template with
 		if err != nil {
 			return myCache, err

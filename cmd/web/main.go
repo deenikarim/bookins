@@ -16,7 +16,7 @@ const portNumber = ":8080"
 /*instantiation our appConfig struct type and making universally accessible*/
 var app config.AppConfig
 
-//making the sessionManager accessible to other packages which is the entire main package
+//session making the sessionManager accessible to other packages which is the entire main package
 var session *scs.SessionManager
 
 func main() {
@@ -35,7 +35,7 @@ func main() {
 	session.Cookie.SameSite = http.SameSiteLaxMode
 	session.Cookie.Secure = app.InProduction //in production set to "true"
 
-	//get the template cache
+	//get the template cache into main.go
 	tc, err := renders.CreateTemplateCache()
 	if err != nil {
 		log.Fatal(err)
