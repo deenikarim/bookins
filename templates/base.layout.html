@@ -127,49 +127,6 @@
       })();
 
 
-      // for the colorButton
-      document.getElementById('colorButton').addEventListener('click', function () {
-        //use the notify function created in the script tags
-        ////notify("text is a message", "warning")
-
-        ////notifyModal("success", "<em> congratulation success</em>", "success", "cool")
-        //attention.toast({msg: "successful in signing"});
-        //attention.success({});
-        ///attention.toast({});
-
-        let html = `
-            <form action = " " method = "post" class="needs-validation" novalidate id="check-availability-form">
-                <div class="form-row">
-                  <div class="col">
-                    <div class="row g-3" id="reservation-dates-modal">
-
-                      <div class="col">
-                        <input type="text" name="start" id ="start" class="form-control" required disabled placeholder="Arrival">
-                      </div>
-
-                      <div class="col">
-                        <input type="text" name="end" id = "end" class="form-control" required disabled placeholder="Departure">
-                      </div>
-
-                    </div>
-                  </div>
-                </div>
-            </form>
-            `
-        attention.custom({ msg: html, title: "choose your dates" });
-
-
-
-      })
-
-
-      //for vanilla datepicker
-      const elem = document.getElementById('reservation-dates');
-      const rangepicker = new DateRangePicker(elem, {
-        clearBtn: true,
-        todayHighlight: true,
-      });
-
 
       //alert function is for displaying Notie alert to clients
       function notify(msg, msgType) {

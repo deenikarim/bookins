@@ -1,15 +1,54 @@
 {{template "base" .}} <!-- using the base layout template-->
 
 {{define "content"}}
-    <div class="container">
-        <div class="row">
-            <div class="col">
-                <h1>this is my search availability page</h1>
-            </div>
+
+<!--main content of the landing page-->
+<div class="container">
+
+    <div class="row">
+        <div class="col-3"></div>
+        <div class="col-md-6">
+            <h1 class=mt-5>Search for Availability</h1>
+
+            <!--creating a search for availability of rooms-->
+            <form action="" method="post" class="needs-validation" novalidate>
+                <div class="form-row">
+                    <div class="col">
+                        <div id="reservation-dates" class="row g-3">
+                            <div class="col">
+                                <div>
+                                    <input type="text" name="start" class="form-control" required placeholder="Arrival">
+                                </div>
+                            </div>
+
+                            <div class="col">
+                                <div>
+                                    <input type="text" name="end" class="form-control" required placeholder="Departure">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <button type="submit" class="btn btn-primary">Search</button>
+            </form>
+
         </div>
     </div>
-
+</div>
 {{end}}
 
 
+{{define "js"}}
+
+    <script>
+    //for vanilla datepicker
+    const elem = document.getElementById('reservation-dates');
+    const rangepicker = new DateRangePicker(elem, {
+    clearBtn: true,
+    todayHighlight: true,
+    });
+    </script>
+{{end}}
 

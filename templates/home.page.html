@@ -1,13 +1,82 @@
 {{template "base" .}} <!-- using the base layout template-->
 
 {{define "content"}}
+
+
+
+    <!--creatting a carousel to allow slideshow-->
+    <div id="main-carousel" class="carousel slide carousel-fade" data-ride="carousel">
+        <!--add the indicators to the carousel, alongside the controls, too.-->
+
+        <div class="carousel-indicators">
+            <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="0" class="active" aria-current="true"
+                    aria-label="Slide 1"></button>
+            <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="1" aria-label="Slide 2"></button>
+            <button type="button" data-bs-target="#main-carousel" data-bs-slide-to="2" aria-label="Slide 3"></button>
+        </div>
+        <div class="carousel-inner">
+            <div class="carousel-item active">
+                <img src="/static/images/woman-laptop.png" class="d-block w-100" alt="woman and laptop">
+                <!--add caption to the slideshow images-->
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>First slide label</h5>
+                    <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="/static/images/tray.png" class="d-block w-100" alt="tray with coffer">
+                <!--add caption to the slideshow images-->
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>First slide label</h5>
+                    <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                </div>
+            </div>
+            <div class="carousel-item">
+                <img src="/static/images/outside.png" class="d-block w-100" alt="outside">
+                <!--add caption to the slideshow images-->
+                <div class="carousel-caption d-none d-md-block">
+                    <h5>First slide label</h5>
+                    <p>Nulla vitae elit libero, a pharetra augue mollis interdum.</p>
+                </div>
+            </div>
+        </div>
+        <!--alongside control on left and right side of the browser window-->
+        <button class="carousel-control-prev" type="button" data-bs-target="#main-carousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#main-carousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
+
+    <!--main content of the landing page-->
     <div class="container">
         <div class="row">
             <div class="col">
-                <h1>this is my home page</h1>
-                
+                <h1 class="text-center mt-4">Welcome to Fort Smythe Bed and Breakfast</h1>
+                <p>
+                    You are far away from Home, set on the majectic waters of Water Bram, this will be a vacation to forever
+                    remember!
+                    You are far away from Home, set on the majectic waters of Water Bram, this will be a vacation to forever
+                    remember!
+                    You are far away from Home, set on the majectic waters of Water Bram, this will be a vacation to forever
+                    remember!
+                    You are far away from Home, set on the majectic waters of Water Bram, this will be a vacation to forever
+                    remember!
+                    You are far away from Home, set on the majectic waters of Water Bram, this will be a vacation to forever
+                    remember!
+                </p>
+            </div>
+        </div>
+        <!--creating the button link to book now -->
+        <div class="row">
+            <div class="col text-center">
+                <a class="btn btn-success" href="/make-reservation" role="button">Make Reservation Now</a>
             </div>
         </div>
     </div>
+
 
 {{end}}

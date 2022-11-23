@@ -1,15 +1,84 @@
 {{template "base" .}} <!-- using the base layout template-->
 
 {{define "content"}}
+
+    <!--main content of the landing page-->
     <div class="container">
+        <!--add image of the general's Quarters-->
         <div class="row">
             <div class="col">
-                <h1>this is my general page</h1>
+                <img src="static/images/generals-quarters.png" class="img-fluid img-thumbnail mx-auto d-block room-width">
+            </div>
+
+        </div>
+
+        <div class="row">
+            <div class="col">
+                <h1 class="text-center mt-4">Generals's Quarters</h1>
+                <p>
+                    You are far away from Home, set on the majectic waters of Water Bram, this will be a vacation to forever
+                    remember!
+                    You are far away from Home, set on the majectic waters of Water Bram, this will be a vacation to forever
+                    remember!
+                    You are far away from Home, set on the majectic waters of Water Bram, this will be a vacation to forever
+                    remember!
+                    You are far away from Home, set on the majectic waters of Water Bram, this will be a vacation to forever
+                    remember!
+                    You are far away from Home, set on the majectic waters of Water Bram, this will be a vacation to forever
+                    remember!
+                </p>
+            </div>
+        </div>
+        <!--creating the button link to book now -->
+        <div class="row">
+            <div class="col text-center">
+                <a class="btn btn-success" href="#!" role="button" id="check-availability-button">Check Availability</a>
             </div>
         </div>
     </div>
 
 {{end}}
 
+{{define "js"}}
+<script>
+    // for the colorButton
+    document.getElementById('check-availability-button').addEventListener('click', function () {
+        //use the notify function created in the script tags
+        ////notify("text is a message", "warning")
+
+        ////notifyModal("success", "<em> congratulation success</em>", "success", "cool")
+        //attention.toast({msg: "successful in signing"});
+        //attention.success({});
+        ///attention.toast({});
+
+        let html = `
+            <form action = " " method = "post" class="needs-validation" novalidate id="check-availability-form">
+                <div class="form-row">
+                  <div class="col">
+                    <div class="row g-3" id="reservation-dates-modal">
+
+                      <div class="col">
+                        <input type="text" name="start" id ="start" class="form-control" required disabled placeholder="Arrival">
+                      </div>
+
+                      <div class="col">
+                        <input type="text" name="end" id = "end" class="form-control" required disabled placeholder="Departure">
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+            </form>
+            `
+        attention.custom({ msg: html, title: "choose your dates" });
+
+
+
+    })
+
+</script>
+
+
+{{end}}
 
 
