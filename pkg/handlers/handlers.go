@@ -1,10 +1,12 @@
 package handlers
 
 import (
+	"encoding/json"
 	"fmt"
 	"github.com/deenikarim/bookings/pkg/config"
 	"github.com/deenikarim/bookings/pkg/models"
 	"github.com/deenikarim/bookings/pkg/renders"
+	"log"
 	"net/http"
 )
 
@@ -90,6 +92,32 @@ func (m *Repository) PostSearchAvailability(w http.ResponseWriter, r *http.Reque
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
 	//renders.RenderTemplate(w, "search-availability.page.html", &models.TemplateData{})
 
+}
+
+//creating struct for JSON request(link to CheckAvailabilityJSON function)//BELOW FUNCTION USE THESE TYPE
+type jsonResponse struct {
+	OK      bool   `json:"ok"`
+	Message string `json:"message"`
+}
+
+//CheckAvailabilityJSON it handle request for checking availability and send JSON response
+func (m *Repository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+	//build request JSON request
+	//INSTANTIATE THE STRUCT TYPE AND POPULATE IT
+	resp := jsonResponse{
+		OK:      true,
+		Message: "Available!",
+	}
+	//Convert the resp variable into JSON to create a JSON file and send it back
+	outJson, err := json.MarshalIndent(resp, "", "     ")
+	if err != nil {
+		log.Println(err)
+	}
+	//adding a Header that tells webs browser that is receiving my response what kind of response I am sending
+	w.Header().Set("Content-Type", "application/json")
+
+	//send the information directly to the ResponseWriter
+	w.Write(outJson)
 }
 
 //Reservation create the reservation page handler function
