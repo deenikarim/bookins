@@ -1,6 +1,7 @@
 package handlers
 
 import (
+	"fmt"
 	"github.com/deenikarim/bookings/pkg/config"
 	"github.com/deenikarim/bookings/pkg/models"
 	"github.com/deenikarim/bookings/pkg/renders"
@@ -41,41 +42,53 @@ func NewHandlers(r *Repository) {
 //Home create the home page handler function
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, "home.page.html", &models.TemplateData{})
+	renders.RenderTemplate(w, r, "home.page.html", &models.TemplateData{})
 }
 
 //About create the about page handler function
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, "about.page.html", &models.TemplateData{})
+	renders.RenderTemplate(w, r, "about.page.html", &models.TemplateData{})
 
 }
 
 //Contact create the Contact us page handler function
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, "contact.page.html", &models.TemplateData{})
+	renders.RenderTemplate(w, r, "contact.page.html", &models.TemplateData{})
 
 }
 
 //Generals create the generals page handler function
 func (m *Repository) Generals(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, "generals.page.html", &models.TemplateData{})
+	renders.RenderTemplate(w, r, "generals.page.html", &models.TemplateData{})
 
 }
 
 //Majors create the Majors page handler function
 func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, "majors.page.html", &models.TemplateData{})
+	renders.RenderTemplate(w, r, "majors.page.html", &models.TemplateData{})
 
 }
 
 //SearchAvailability create the SearchAvailability page handler function
 func (m *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, "search-availability.page.html", &models.TemplateData{})
+	renders.RenderTemplate(w, r, "search-availability.page.html", &models.TemplateData{})
+
+}
+
+//PostSearchAvailability create the handler for the POST request
+func (m *Repository) PostSearchAvailability(w http.ResponseWriter, r *http.Request) {
+	//get the form data which is the input namespace ok of the request
+	start := r.Form.Get("start")
+	end := r.Form.Get("end")
+
+	w.Write([]byte(fmt.Sprintf("start date is %s and end date is %s", start, end)))
+	//calling the renderTemplate function inside the handler function to render the home page to the browser
+	//renders.RenderTemplate(w, "search-availability.page.html", &models.TemplateData{})
 
 }
 
@@ -86,7 +99,7 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	stringMap["test"] = "hello again, says by kareem"
 
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, "make-reservation.page.html", &models.TemplateData{
+	renders.RenderTemplate(w, r, "make-reservation.page.html", &models.TemplateData{
 		//send data to the template
 		StringMap: stringMap,
 	})

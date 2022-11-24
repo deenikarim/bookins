@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/deenikarim/bookings/pkg/config"
 	"github.com/deenikarim/bookings/pkg/models"
+	"github.com/justinas/nosurf"
 	"html/template"
 	"log"
 	"net/http"
@@ -32,7 +33,10 @@ func NewTemplates(a *config.AppConfig) {
 
 // AddDefaultData add data that should be available to every single page
 //From
-func AddDefaultData(td *models.TemplateData) *models.TemplateData {
+func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+	//adding CSRF protection and using noSurf csrf package
+	td.CSRFToken = nosurf.Token(r) //store CSRF token in the field of CSRFToken
+
 	return td // what it is doing now is taking the templateData and just returning
 }
 
@@ -43,7 +47,7 @@ func AddDefaultData(td *models.TemplateData) *models.TemplateData {
 //RenderTemplate a function for rendering templates
 //what the function does is that it take a respondWriter and the name of a template you want to parse and read
 // it to the browser
-func RenderTemplate(w http.ResponseWriter, html string, td *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *models.TemplateData) {
 
 	// get the template cache
 	/*tc, err := CreateTemplateCache()
@@ -69,7 +73,7 @@ func RenderTemplate(w http.ResponseWriter, html string, td *models.TemplateData)
 	buff := new(bytes.Buffer)
 
 	//here is where to call AddDefaultData function before the execute function
-	td = AddDefaultData(td)
+	td = AddDefaultData(td, r)
 
 	_ = t.Execute(buff, td)
 

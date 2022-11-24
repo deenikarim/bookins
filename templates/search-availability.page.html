@@ -11,7 +11,9 @@
             <h1 class=mt-5>Search for Availability</h1>
 
             <!--creating a search for availability of rooms-->
-            <form action="" method="post" class="needs-validation" novalidate>
+            <form action="/search-availability" method="post" class="needs-validation" novalidate>
+                <!-- nosurf required a hidden field with a name and value of csrf_token-->
+                <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
                 <div class="form-row">
                     <div class="col">
                         <div id="reservation-dates" class="row g-3">
@@ -29,7 +31,6 @@
                         </div>
                     </div>
                 </div>
-
                 <hr>
                 <button type="submit" class="btn btn-primary">Search</button>
             </form>
