@@ -213,47 +213,73 @@
           })
         }
 
+        //BELOW CODE IS USED ON MAJORS AND GENERALS PAGE AS A MODAL
         //CREATING MULTIPLE INPUTS: FOR ARRIVAL AND DEPARTURE DATES FOR USERS, IT USES SWEETALERT IN MAJORS AND GENERAL PAGES
         async function custom(c) {
           const {
             msg = "",
             title = "",
-            position = "center",
-          } = c;
+           position = "center",
+          } = c; //code explain: when the function is call we pass it a message and a title which then set the values we have passed to the var "c"
 
           /*whatever is put into the form and do something with it*/
-          const { value: formValues } = await Swal.fire({
+          const { value: result } = await Swal.fire({
             title: title,
             position: position,
             html: msg,
             backdrop: false,
             focusConfirm: false,
             showCancelButton: true,
-            //before it opens its going to show the datepicker
+            //before it opens it is going to show the datepicker
             willOpen: () => {
-              const elem = document.getElementById('reservation-dates-modal');
-              const rangepicke = new DateRangePicker(elem, {
-                clearBtn: true,
-                todayHighlight: true,
-              })
+                //if willOpen is specified when I make the call to this custom function then execute willOpen
+                if (c.willOpen !== undefined) {
+                  c.willOpen();
+              }
             },
+              
             preConfirm: () => {
               //shows what was entered by the user
-
               return [
                 document.getElementById('start').value,
                 document.getElementById('end').value
               ]
             },
-            //after it is opens its going to remove the disabled attribute on the input element
+            //after it is opens it is going to remove the disabled attribute on the input element
             didOpen: () => {
-              document.getElementById('start').removeAttribute('disabled');
-              document.getElementById('end').removeAttribute('disabled');
+             if (c.didOpen !== undefined){
+                 c.didOpen();
+             }
             }
           })
-          if (formValues) {
+            //just show what is entered but not what I want
+          /*if (formValues) {
             Swal.fire(JSON.stringify(formValues))
-          }
+          }*/
+
+        //WORKING ON THE AJAX REQUEST
+        //checking to see if we actually have a result
+            if (result){
+                //if they actually do not click on the cancel button then want to do something
+                if (result.dismiss !== Swal.DismissReason.cancel){
+                    //(result.value !== ""): if there is result value
+                    if (result.value !== ""){
+                        //I want to call a callback, want to execute some js back on the clicked page thus what happen when someone fill a form
+                        //if there is a callback then want to do something
+                        if (c.callback !== undefined){
+                            //calling the callback and pass it the result(what they entered or what I got back)
+                            c.callback(result);
+                        }
+                    } else {
+                        //if the result value is exactly equal to nothing, I want to do nothing
+                        c.callback(false);
+                    }
+                } else {
+                    //(result.dismiss !== Swal.DismissReason.cancel): if the result is dismissed, if they hit the cancel button then do not do anything
+                    c.callback(false);
+                }
+            } //CODE EXPLANATION: it allows me to process code after the Swal dialog box is closed thus after they hit the submit button
+
         }
 
         return {

@@ -3,9 +3,9 @@ package handlers
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/deenikarim/bookings/pkg/config"
-	"github.com/deenikarim/bookings/pkg/models"
-	"github.com/deenikarim/bookings/pkg/renders"
+	"github.com/deenikarim/bookings/internal/config"
+	"github.com/deenikarim/bookings/internal/models"
+	"github.com/deenikarim/bookings/internal/renders"
 	"log"
 	"net/http"
 )
@@ -113,6 +113,7 @@ func (m *Repository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Reques
 	if err != nil {
 		log.Println(err)
 	}
+
 	//adding a Header that tells webs browser that is receiving my response what kind of response I am sending
 	w.Header().Set("Content-Type", "application/json")
 
