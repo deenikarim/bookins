@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/deenikarim/bookings/internal/config"
+	"github.com/deenikarim/bookings/internal/forms"
 	"github.com/deenikarim/bookings/internal/models"
 	"github.com/deenikarim/bookings/internal/renders"
 	"log"
@@ -123,15 +124,17 @@ func (m *Repository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Reques
 
 //Reservation create the reservation page handler function
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
-	//perform some logic
-	stringMap := make(map[string]string)
-	stringMap["test"] = "hello again, says by kareem"
 
-	//calling the renderTemplate function inside the handler function to render the home page to the browser
+	//calling the renderTemplate function inside the handler function to render page to the browser
 	renders.RenderTemplate(w, r, "make-reservation.page.html", &models.TemplateData{
 		//send data to the template
-		StringMap: stringMap,
+		Form: forms.New(nil), //this includes an empty form
 	})
+}
+
+//PostReservation handlers the posting of the reservation form
+func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+
 }
 
 //*********************************************** END ********************************************//

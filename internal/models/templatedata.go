@@ -1,5 +1,7 @@
 package models
 
+import "github.com/deenikarim/bookings/internal/forms"
+
 //PART-6: DATA SHARING WITH THE TEMPLATES
 
 //TemplateData hold data sent from handlers to templates
@@ -11,4 +13,5 @@ type TemplateData struct {
 	CSRFToken string
 	Flash     string
 	Error     string
+	Form      *forms.Form //Available to every page whether it has a form or not
 }
