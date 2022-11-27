@@ -134,6 +134,37 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 
 //PostReservation handlers the posting of the reservation form
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
+	//parsing the form data
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+		return
+	}
+
+	//initializes and populate the reservation struct Type
+	reservation := models.Reservation{
+		FirstName:          r.Form.Get("first_name"), //Get something from post request
+		LastName:           r.Form.Get("last_name"),
+		Email:              r.Form.Get("email"),
+		Phone:              r.Form.Get("phone"),
+		Address:            r.Form.Get("address"),
+		AddressTwo:         r.Form.Get("address_two"),
+		City:               r.Form.Get("city"),
+		TermsAndConditions: r.Form.Get("terms_and_conditions"),
+		State:              r.Form.Get("state"),
+	}
+
+	//creating a form object
+	form := forms.New(r.PostForm) //contains all those url values and the associate data
+
+	//Has: it returns true or false and also add an error if first_name is empty
+	form.Has("first_name", r)
+
+	//if the form actually have errors or problems on it
+	if !form.Validate() {
+		data := make(map[string]interface{})
+		data["reservation"] = reservation //store the reservation variable from above in here
+	}
 
 }
 
