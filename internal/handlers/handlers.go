@@ -124,15 +124,20 @@ func (m *Repository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Reques
 
 //Reservation create the reservation page handler function
 func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
+	//empty Reservation but it has all the necessary fields
+	var emptyReservation models.Reservation
+	data := make(map[string]interface{})
+	data["reservation"] = emptyReservation //stores the empty reservation "TIP: needs to have the same name used to store the reservation in POST-RESERVATION"
 
 	//calling the renderTemplate function inside the handler function to render page to the browser
 	renders.RenderTemplate(w, r, "make-reservation.page.html", &models.TemplateData{
 		//send data to the template
 		Form: forms.New(nil), //this includes an empty form
+		Data: data,           //adding an empty reservation input form
 	})
 }
 
-//PostReservation handlers the posting of the reservation form
+//PostReservation handlers the posting of the reservation form (working server side validation)
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	//parsing the form data
 	err := r.ParseForm()
@@ -158,13 +163,42 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	form := forms.New(r.PostForm) //contains all those url values and the associate data
 
 	//Has: it returns true or false and also add an error if first_name is empty
-	form.Has("first_name", r)
+	//passing it through validation, for now it has one rule which is it has to have a first name
+	//form.Has("first_name", r)
 
-	//if the form actually have errors or problems on it
+	form.Required("first_name", "last_name", "email", "phone", "address", "address_two", "city")
+	form.MinLength("first_name", 3, r)
+	//IsEmail checks for valid email address
+	form.IsEmail("email")
+
+	//if the form actually have errors or problems on it or in other words if it is not valid
 	if !form.Validate() {
+		//creating a variable to hold our reservation ::: creating a map to hold our string interface
 		data := make(map[string]interface{})
 		data["reservation"] = reservation //store the reservation variable from above in here
+
+		//calling the renderTemplate function inside the handler function to render page to the browser
+		renders.RenderTemplate(w, r, "make-reservation.page.html", &models.TemplateData{
+			//send data to the template
+			//Form: forms.New(nil), //this includes an empty form
+			Form: form,
+			Data: data, //passing the reservation: NOW have the information the user entered
+		})
+		return
 	}
+
+	//taking users to reservation summary page
+	m.App.Session.Put(r.Context(), "reservation", reservation) //how to put something into a session
+
+	//redirect our user
+	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
+
+}
+
+//ReservationSummary handles the posted form information
+func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
+	//calling the renderTemplate function inside the handler function to render the home page to the browser
+	renders.RenderTemplate(w, r, "reservation-summary.page.html", &models.TemplateData{})
 
 }
 

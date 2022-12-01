@@ -1,6 +1,6 @@
 package models
 
-//Reservation holds a reservation data structure
+//Reservation holds a reservation data structure (working server side validation)
 type Reservation struct {
 	FirstName          string
 	LastName           string

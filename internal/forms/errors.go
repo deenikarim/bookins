@@ -1,5 +1,7 @@
 package forms
 
+//(working server side validation)
+
 //errors will hold our errors which is a map of type string with every value being a slice of strings
 //because we might have more than one error for a given field in a form (why is slice)
 type errors map[string][]string
@@ -20,6 +22,6 @@ func (e errors) Get(field string) string {
 	if len(es) == 0 {
 		return ""
 	}
-	return es[0]
+	return es[0] //return index zero which is the first thing in that slice(the first error is that slice is "this field can't be blank")
 	//code explanation: given the means of serve whether the field given field has a value error
 }

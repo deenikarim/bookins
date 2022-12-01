@@ -1,10 +1,12 @@
 package main
 
 import (
+	"encoding/gob"
 	"fmt"
 	"github.com/alexedwards/scs/v2"
 	"github.com/deenikarim/bookings/internal/config"
 	"github.com/deenikarim/bookings/internal/handlers"
+	"github.com/deenikarim/bookings/internal/models"
 	"github.com/deenikarim/bookings/internal/renders"
 	"log"
 	"net/http"
@@ -26,6 +28,9 @@ func main() {
 
 	//change this to true when in production, pull from appConfig
 	app.InProduction = false
+
+	//what am I going to put into the session
+	gob.Register(models.Reservation{})
 
 	//SESSIONS MODULE:5; SETTING UP A NEW SESSION MANAGER
 	// Initialize a new session manager and configure the session lifetime.
