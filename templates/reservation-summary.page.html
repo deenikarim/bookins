@@ -1,6 +1,9 @@
 {{template "base" .}} <!-- using the base layout template-->
 
 {{define "content"}}
+{{/*create a variable and set it to pull out the data variable that is passed to the template*/}}
+  {{$res := index .Data "reservation"}}
+
   <div class="container">
     <div class="row">
       <div class="col">
@@ -14,7 +17,7 @@
 
             <tr>
               <td>Name:</td>
-              <td></td>
+              <td>{{$res.FirstName}} {{$res.LastName}}</td>
             </tr>
 
             <tr>
@@ -29,12 +32,12 @@
 
             <tr>
               <td>Email:</td>
-              <td></td>
+              <td>{{$res.Email}}</td>
             </tr>
 
             <tr>
               <td>Phone:</td>
-              <td></td>
+              <td>{{$res.Phone}}</td>
             </tr>
 
           </tbody>

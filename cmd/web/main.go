@@ -29,7 +29,7 @@ func main() {
 	//change this to true when in production, pull from appConfig
 	app.InProduction = false
 
-	//what am I going to put into the session
+	//what am I going to put into the session(SESSION PART)
 	gob.Register(models.Reservation{})
 
 	//SESSIONS MODULE:5; SETTING UP A NEW SESSION MANAGER

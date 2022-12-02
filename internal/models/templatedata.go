@@ -13,5 +13,6 @@ type TemplateData struct {
 	CSRFToken string
 	Flash     string
 	Error     string
+	Warning   string
 	Form      *forms.Form //Available to every page whether it has a form or not
 }

@@ -188,17 +188,38 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	}
 
 	//taking users to reservation summary page
-	m.App.Session.Put(r.Context(), "reservation", reservation) //how to put something into a session
+	//how to put something into a session(now putting the reservation or whatever they have entered into a session)
+	m.App.Session.Put(r.Context(), "reservation", reservation)
 
-	//redirect our user
+	//redirect our user to reservation summary page(now when the user hit the submit button, goes to reservation summary page)
 	http.Redirect(w, r, "/reservation-summary", http.StatusSeeOther)
 
 }
 
-//ReservationSummary handles the posted form information
+//ReservationSummary handles the posted form information(displaying a confirmation page)
 func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) {
+
+	//how to get something out of a session
+	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation) //type assert
+	if !ok {
+		log.Println("can not get item from session")
+		//pass a value("error message") into our session
+		m.App.Session.Put(r.Context(), "error", "can not get item from session")
+		//still return a blank page, so we now need to redirect them to somewhere else which is the HOME Page
+		http.Redirect(w, r, "/", http.StatusTemporaryRedirect)
+		return
+	}
+	//taken out our session from reservation post handler
+	m.App.Session.Remove(r.Context(), "reservation") //remove data from our reservation
+
+	//after getting the reservation item from the session then I want to do something with it(pass the reservation pulled as a template data)
+	data := make(map[string]interface{})
+	data["reservation"] = reservation //store the reservation variable created above in our TemplateData under field "Data"
+
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, r, "reservation-summary.page.html", &models.TemplateData{})
+	renders.RenderTemplate(w, r, "reservation-summary.page.html", &models.TemplateData{
+		Data: data, //passing the reservation pulled out of the session to the template
+	})
 
 }
 

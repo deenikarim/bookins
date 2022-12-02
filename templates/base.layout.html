@@ -149,6 +149,19 @@
         })
       }
 
+      //This code: says if you have some value in Error, that is not empty then do this with it
+      {{with .Error}}
+        notify("{{.}}", "error") //calling the error type from notie package
+      {{end}}
+
+      {{with .Flash}}
+        notify("{{.}}", "success") //calling the error type from notie package
+      {{end}}
+
+
+      {{with .Warning}}
+        notify("{{.}}", "warning") //calling the error type from notie package
+      {{end}}
 
 
       //DEMONSTRATING HOW JAVASCRIPT MODULES WORK

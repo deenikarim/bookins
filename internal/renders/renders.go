@@ -34,6 +34,11 @@ func NewTemplates(a *config.AppConfig) {
 // AddDefaultData add data that should be available to every single page
 //From
 func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateData {
+	//populate the fields in template data(will automatically be populated when I am rendering page)
+	td.Flash = app.Session.PopString(r.Context(), "flash")
+	td.Error = app.Session.PopString(r.Context(), "error")
+	td.Warning = app.Session.PopString(r.Context(), "warning")
+
 	//adding CSRF protection and using noSurf csrf package
 	td.CSRFToken = nosurf.Token(r) //store CSRF token in the field of CSRFToken
 
