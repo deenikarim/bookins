@@ -2,18 +2,21 @@ package renders
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"github.com/deenikarim/bookings/internal/config"
 	"github.com/deenikarim/bookings/internal/models"
 	"github.com/justinas/nosurf"
 	"html/template"
-	"log"
 	"net/http"
 	"path/filepath"
 )
 
-//Function variable for the func type
+//functions: holds all the functions we want to make available to our templates
 var functions = template.FuncMap{}
+
+//pathToTemplate prevent hard coding of path
+var pathToTemplate = "./templates"
 
 /*PART-3: GETTING THE appCONFIG into the render package */
 /**************************************************************************/
@@ -52,7 +55,7 @@ func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 //RenderTemplate a function for rendering templates
 //what the function does is that it take a respondWriter and the name of a template you want to parse and read
 // it to the browser
-func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *models.TemplateData) {
+func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *models.TemplateData) error {
 
 	// get the template cache
 	/*tc, err := CreateTemplateCache()
@@ -71,7 +74,8 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *mod
 	//get the individual templates from the myCache variable
 	t, ok := tc[html]
 	if !ok {
-		log.Fatal("can not fetch the individual template")
+		//log.Fatal("can not fetch the individual template")
+		return errors.New("can't get item from the cache")
 	}
 
 	//store the template into a buffer
@@ -85,7 +89,10 @@ func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *mod
 	_, err := buff.WriteTo(w)
 	if err != nil {
 		fmt.Println("Error writing template to the browser", err)
+		return err
 	}
+	//if there is no error it returns nil
+	return nil
 }
 
 /***************************************** END ***************************************************/
@@ -99,7 +106,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 
 	//1.2: find all the necessary pages in the template folder
 	//Glob function returns the names of all files matching a pattern or nil if there is no match files
-	pages, err := filepath.Glob("./templates/*.page.html")
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.html", pathToTemplate))
 	//checking for error because Glob function also returns an error if it finds no files
 	if err != nil {
 		return myCache, err
@@ -128,7 +135,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		// BEGIN: check to see if something matches
 
 		//code below: look for any file in the template folder that end (.layout) or checking for the existence
-		matches, err := filepath.Glob("./templates/*.layout.html")
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.html", pathToTemplate))
 		if err != nil {
 			return myCache, err
 		}
@@ -137,7 +144,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		//if the above code can find any file that ends with .layout.html, then want to do something with it
 		if len(matches) > 0 {
 			//if it is greater than 0 or finds a file with that extension, what do I do with it
-			ts, err = ts.ParseGlob("./templates/*layout.html")
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*layout.html", pathToTemplate))
 			if err != nil {
 				return myCache, err
 			}

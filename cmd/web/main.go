@@ -6,10 +6,12 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/deenikarim/bookings/internal/config"
 	"github.com/deenikarim/bookings/internal/handlers"
+	"github.com/deenikarim/bookings/internal/helpers"
 	"github.com/deenikarim/bookings/internal/models"
 	"github.com/deenikarim/bookings/internal/renders"
 	"log"
 	"net/http"
+	"os"
 	"time"
 )
 
@@ -21,15 +23,51 @@ var app config.AppConfig
 //session making the sessionManager accessible to other packages which is the entire main package
 var session *scs.SessionManager
 
+//infoLog information about an error
+var infoLog *log.Logger
+
+//errorLog details about an error
+var errorLog *log.Logger
+
 func main() {
 
+	err := run()
+	if err != nil {
+		log.Fatal(err) //write to the terminal and stop the application
+	}
+
+	//writing to the console
+	fmt.Println(fmt.Sprintf("starting application on: %s", portNumber))
+
+	//IMPROVED ROUTERS MODULE 1.1
+	//how to use the routes() function created
+	srv := &http.Server{
+		Addr:    portNumber,
+		Handler: routes(&app),
+	}
+	//now starting the actual server
+	err = srv.ListenAndServe()
+	log.Fatal(err)
+
+}
+
+//run is for testing purposes
+func run() error {
 	//PART-3: SETTING UP APPLICATION WIDE CONFIGURATION AND NOW ; GO TO RENDER PACKAGE AND GET IT THERE
 	/******************************************************************************************/
 
 	//change this to true when in production, pull from appConfig
 	app.InProduction = false
 
-	//what am I going to put into the session(SESSION PART)
+	//create the information log
+	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog //store infoLog into appConfig
+
+	//create the Error log
+	errorLog = log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog //store infoLog into appConfig
+
+	//You need to tell golang: what am I going to put into the session(SESSION PART)
 	gob.Register(models.Reservation{})
 
 	//SESSIONS MODULE:5; SETTING UP A NEW SESSION MANAGER
@@ -44,6 +82,7 @@ func main() {
 	tc, err := renders.CreateTemplateCache()
 	if err != nil {
 		log.Fatal(err)
+		return nil
 	}
 	//store template cache in struct type and session in the session struct type
 	app.Session = session
@@ -53,7 +92,7 @@ func main() {
 
 	/*******************************************************************************************/
 
-	/*from handler package*/
+	/*from handler package ** INITIALIZE RENDER ***/
 	/**/
 	// NewRepo: calling the NewRepo in the main.go
 	//getting our NewRepo function, outcome: create the repository variable
@@ -62,32 +101,14 @@ func main() {
 	handlers.NewHandlers(repo) //NOW:: to make changes to handlers function in order to have access to repository
 	/**/
 
-	/*from render package*/
+	/*from render package ** INITIALIZE RENDER ***/
 	/**/
-	//calling the NewTemplates function in the main.go
+	//calling the NewTemplates function in the main.go ** INITIALIZE RENDER **
 	renders.NewTemplates(&app)
 	/**/
 
-	//HandleFunc: registers the handler function for the given pattern(ROUTERS)
-	//http.HandleFunc("/", handlers.Repo.Home)
-	//http.HandleFunc("/about", handlers.Repo.About)
-	//http.HandleFunc("/reservation", handlers.Repo.Reservation)
+	//setting up the app variable and populating when the run() function is called
+	helpers.NewHelpers(&app)
 
-	//writing to the console
-	fmt.Println(fmt.Sprintf("starting application on: %s", portNumber))
-
-	// listen on the TCP network address and then calls serve with handler to handle requests on incoming
-	// connection(creating the web serve that listen to request)
-	//_ = http.ListenAndServe(portNumber, nil)
-
-	//IMPROVED ROUTERS MODULE 1.1
-	//how to use the routes() function created
-	srv := &http.Server{
-		Addr:    portNumber,
-		Handler: routes(&app),
-	}
-	//now starting the actual server
-	err = srv.ListenAndServe()
-	log.Fatal(err)
-
+	return nil
 }

@@ -5,9 +5,9 @@ import (
 	"fmt"
 	"github.com/deenikarim/bookings/internal/config"
 	"github.com/deenikarim/bookings/internal/forms"
+	"github.com/deenikarim/bookings/internal/helpers"
 	"github.com/deenikarim/bookings/internal/models"
 	"github.com/deenikarim/bookings/internal/renders"
-	"log"
 	"net/http"
 )
 
@@ -95,7 +95,7 @@ func (m *Repository) PostSearchAvailability(w http.ResponseWriter, r *http.Reque
 
 }
 
-//creating struct for JSON request(link to CheckAvailabilityJSON function)//BELOW FUNCTION USE THESE TYPE
+//jsonResponse create struct for JSON request(link to CheckAvailabilityJSON function)
 type jsonResponse struct {
 	OK      bool   `json:"ok"`
 	Message string `json:"message"`
@@ -112,7 +112,8 @@ func (m *Repository) CheckAvailabilityJSON(w http.ResponseWriter, r *http.Reques
 	//Convert the resp variable into JSON to create a JSON file and send it back
 	outJson, err := json.MarshalIndent(resp, "", "     ")
 	if err != nil {
-		log.Println(err)
+		helpers.ServerError(w, err)
+		return
 	}
 
 	//adding a Header that tells webs browser that is receiving my response what kind of response I am sending
@@ -132,7 +133,7 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render page to the browser
 	renders.RenderTemplate(w, r, "make-reservation.page.html", &models.TemplateData{
 		//send data to the template
-		Form: forms.New(nil), //this includes an empty form
+		Form: forms.New(nil), //this includes or create  an empty form
 		Data: data,           //adding an empty reservation input form
 	})
 }
@@ -141,8 +142,11 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	//parsing the form data
 	err := r.ParseForm()
+	//err = errors.New("this is something contains errors") ()DEMONSTRATING errors
 	if err != nil {
-		log.Println(err)
+		//now when something were wrong while parsing the form then this code will write to the terminal
+		//the detailed error message
+		helpers.ServerError(w, err)
 		return
 	}
 
@@ -167,7 +171,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	//form.Has("first_name", r)
 
 	form.Required("first_name", "last_name", "email", "phone", "address", "address_two", "city")
-	form.MinLength("first_name", 3, r)
+	form.MinLength("first_name", 3)
 	//IsEmail checks for valid email address
 	form.IsEmail("email")
 
@@ -202,7 +206,8 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	//how to get something out of a session
 	reservation, ok := m.App.Session.Get(r.Context(), "reservation").(models.Reservation) //type assert
 	if !ok {
-		log.Println("can not get item from session")
+		//log.Println("can not get item from session")
+		m.App.ErrorLog.Println("can not get item from session")
 		//pass a value("error message") into our session
 		m.App.Session.Put(r.Context(), "error", "can not get item from session")
 		//still return a blank page, so we now need to redirect them to somewhere else which is the HOME Page
@@ -222,5 +227,3 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	})
 
 }
-
-//*********************************************** END ********************************************//

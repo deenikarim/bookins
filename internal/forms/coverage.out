@@ -1,0 +1,18 @@
+mode: set
+github.com/deenikarim/bookings/internal/forms/errors.go:12.44,16.2 1 1
+github.com/deenikarim/bookings/internal/forms/errors.go:20.42,22.18 2 1
+github.com/deenikarim/bookings/internal/forms/errors.go:25.2,25.14 1 1
+github.com/deenikarim/bookings/internal/forms/errors.go:22.18,24.3 1 1
+github.com/deenikarim/bookings/internal/forms/forms.go:22.33,27.2 1 1
+github.com/deenikarim/bookings/internal/forms/forms.go:30.43,32.31 1 1
+github.com/deenikarim/bookings/internal/forms/forms.go:32.31,38.37 2 1
+github.com/deenikarim/bookings/internal/forms/forms.go:38.37,42.4 1 1
+github.com/deenikarim/bookings/internal/forms/forms.go:49.39,57.13 2 1
+github.com/deenikarim/bookings/internal/forms/forms.go:62.2,62.13 1 1
+github.com/deenikarim/bookings/internal/forms/forms.go:57.13,61.3 1 1
+github.com/deenikarim/bookings/internal/forms/forms.go:66.32,71.2 1 1
+github.com/deenikarim/bookings/internal/forms/forms.go:74.57,79.21 2 1
+github.com/deenikarim/bookings/internal/forms/forms.go:83.2,83.13 1 1
+github.com/deenikarim/bookings/internal/forms/forms.go:79.21,82.3 2 1
+github.com/deenikarim/bookings/internal/forms/forms.go:88.38,89.40 1 1
+github.com/deenikarim/bookings/internal/forms/forms.go:89.40,91.3 1 1

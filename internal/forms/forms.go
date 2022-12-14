@@ -3,7 +3,6 @@ package forms
 import (
 	"fmt"
 	"github.com/asaskevich/govalidator"
-	"net/http"
 	"net/url"
 	"strings"
 )
@@ -47,13 +46,14 @@ func (f *Form) Required(fields ...string) {
 
 //Has checks if form fields is post and not empty(check if a field exists)
 //defined certain Checks to see if the form data we received is valid or not
-func (f *Form) Has(field string, r *http.Request) bool {
+func (f *Form) Has(field string) bool {
 	//checking to see if a field is fulfilled or exists
 	//code:this check a form like a post request for the value of first_name as does it have an entry for
 	//first_name, if it has one, and it is an empty string then return false otherwise return true
 
 	//MODIFIED: To check whether the checkbox requirement  is fulfilled
-	x := r.Form.Get(field)
+	//x := r.Form.Get(field)
+	x := f.Get(field)
 	if x == "" {
 		//adding errors to input fields if input field is empty and a message
 		//f.Errors.Add(field, "This field can't be blank!")
@@ -71,9 +71,10 @@ func (f *Form) Validate() bool {
 }
 
 //MinLength checks for a field or strings minimum length
-func (f *Form) MinLength(field string, length int, r *http.Request) bool {
+func (f *Form) MinLength(field string, length int) bool {
 	//getting the value of a field or strings
-	x := r.Form.Get(field)
+	//x := r.Form.Get(field)
+	x := f.Get(field)
 	//checking to see if it is long enough
 	if len(x) < length {
 		f.Errors.Add(field, fmt.Sprintf("This field must be at least %d characters long", length))

@@ -3,6 +3,7 @@ package config
 import (
 	"github.com/alexedwards/scs/v2"
 	"html/template"
+	"log"
 )
 
 //PART-3 ;;;; SETTING UP APPLICATION WIDE CONFIGURATION AND GO MAIN.GO FOR FINAL SETUP
@@ -13,4 +14,6 @@ type AppConfig struct {
 	TemplateCache map[string]*template.Template
 	InProduction  bool
 	Session       *scs.SessionManager
+	InfoLog       *log.Logger
+	ErrorLog      *log.Logger
 }

@@ -1,0 +1,10 @@
+mode: set
+github.com/deenikarim/bookings/cmd/web/main.go:24.13,27.16 2 0
+github.com/deenikarim/bookings/cmd/web/main.go:32.2,42.16 4 0
+github.com/deenikarim/bookings/cmd/web/main.go:27.16,29.3 1 0
+github.com/deenikarim/bookings/cmd/web/main.go:47.18,67.16 9 1
+github.com/deenikarim/bookings/cmd/web/main.go:72.2,102.12 7 1
+github.com/deenikarim/bookings/cmd/web/main.go:67.16,70.3 2 0
+github.com/deenikarim/bookings/cmd/web/middleware.go:22.45,33.2 3 1
+github.com/deenikarim/bookings/cmd/web/middleware.go:36.50,38.2 1 1
+github.com/deenikarim/bookings/cmd/web/routes.go:11.49,45.2 18 1
