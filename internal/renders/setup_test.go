@@ -5,6 +5,7 @@ import (
 	"github.com/alexedwards/scs/v2"
 	"github.com/deenikarim/bookings/internal/config"
 	"github.com/deenikarim/bookings/internal/models"
+	"log"
 	"net/http"
 	"os"
 	"testing"
@@ -20,6 +21,14 @@ func TestMain(m *testing.M) {
 
 	//change this to true when in production, pull from appConfig
 	testApp.InProduction = false
+
+	//create the information log
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	testApp.InfoLog = infoLog //store infoLog into appConfig
+
+	//create the Error log
+	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	testApp.ErrorLog = errorLog //store infoLog into appConfig
 
 	//You need to tell golang: what am I going to put into the session(SESSION PART)
 	gob.Register(models.Reservation{})

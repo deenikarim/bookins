@@ -13,6 +13,7 @@ import (
 	"html/template"
 	"log"
 	"net/http"
+	"os"
 	"path/filepath"
 	"time"
 )
@@ -34,6 +35,14 @@ func getRoute() http.Handler {
 
 	//change this to true when in production, pull from appConfig
 	app.InProduction = false
+
+	//create the information log
+	infoLog := log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog //store infoLog into appConfig
+
+	//create the Error log
+	errorLog := log.New(os.Stdout, "ERROR\t", log.Ldate|log.Ltime|log.Lshortfile)
+	app.ErrorLog = errorLog //store infoLog into appConfig
 
 	//what am I going to put into the session(SESSION PART)
 	gob.Register(models.Reservation{})
