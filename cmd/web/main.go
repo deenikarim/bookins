@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/alexedwards/scs/v2"
 	"github.com/deenikarim/bookings/internal/config"
+	"github.com/deenikarim/bookings/internal/driver"
 	"github.com/deenikarim/bookings/internal/handlers"
 	"github.com/deenikarim/bookings/internal/helpers"
 	"github.com/deenikarim/bookings/internal/models"
@@ -31,10 +32,11 @@ var errorLog *log.Logger
 
 func main() {
 
-	err := run()
+	db, err := run()
 	if err != nil {
 		log.Fatal(err) //write to the terminal and stop the application
 	}
+	defer db.SQL.Close()
 
 	//writing to the console
 	fmt.Println(fmt.Sprintf("starting application on: %s", portNumber))
@@ -52,7 +54,7 @@ func main() {
 }
 
 //run is for testing purposes
-func run() error {
+func run() (*driver.DB, error) {
 	//PART-3: SETTING UP APPLICATION WIDE CONFIGURATION AND NOW ; GO TO RENDER PACKAGE AND GET IT THERE
 	/******************************************************************************************/
 
@@ -82,7 +84,7 @@ func run() error {
 	tc, err := renders.CreateTemplateCache()
 	if err != nil {
 		log.Fatal(err)
-		return nil
+		return nil, err
 	}
 	//store template cache in struct type and session in the session struct type
 	app.Session = session
@@ -90,13 +92,20 @@ func run() error {
 	app.UseCache = false
 	/**/
 
-	/*******************************************************************************************/
+	//CONNECTING TO DATABASE
+	log.Println("connecting to database....")
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=bookings user=postgres password=024123deeni")
+	if err != nil {
+		log.Fatal("can not connect to database! Dying...")
+	}
+	log.Println("connected to database")
 
+	/*******************************************************************************************/
 	/*from handler package ** INITIALIZE RENDER ***/
 	/**/
 	// NewRepo: calling the NewRepo in the main.go
 	//getting our NewRepo function, outcome: create the repository variable
-	repo := handlers.NewRepo(&app) //argument:: referencing to "app" to have access to appConfig struct type
+	repo := handlers.NewRepo(&app, db) //argument:: referencing to "app" to have access to appConfig struct type
 	//after the repository variable is created, pass it back to NewHandlers
 	handlers.NewHandlers(repo) //NOW:: to make changes to handlers function in order to have access to repository
 	/**/
@@ -110,5 +119,5 @@ func run() error {
 	//setting up the app variable and populating when the run() function is called
 	helpers.NewHelpers(&app)
 
-	return nil
+	return db, nil
 }

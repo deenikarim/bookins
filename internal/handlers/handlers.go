@@ -4,10 +4,13 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/deenikarim/bookings/internal/config"
+	"github.com/deenikarim/bookings/internal/driver"
 	"github.com/deenikarim/bookings/internal/forms"
 	"github.com/deenikarim/bookings/internal/helpers"
 	"github.com/deenikarim/bookings/internal/models"
 	"github.com/deenikarim/bookings/internal/renders"
+	"github.com/deenikarim/bookings/internal/repository"
+	"github.com/deenikarim/bookings/internal/repository/dbRepo"
 	"net/http"
 )
 
@@ -23,12 +26,16 @@ var Repo *Repository
 type Repository struct {
 	App *config.AppConfig //embed a struct in another struct
 	//things to put in here example sharing the database connection pool
+	DB repository.DatabaseRepo
 }
 
 //NewRepo create a new repository
-func NewRepo(a *config.AppConfig) *Repository {
+func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		App: a, //populate the struct type created so everything in appConfig can be access by repository
+		DB:  dbRepo.NewPostgresRepo(db.SQL, a),
+		//reason: above code; db is not a repository but just a pointer to driver.DB so use the
+		//NewPostgresRepo() instead
 	}
 }
 
@@ -46,6 +53,7 @@ func NewHandlers(r *Repository) {
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
 	renders.RenderTemplate(w, r, "home.page.html", &models.TemplateData{})
+	m.DB.AllUsers()
 }
 
 //About create the about page handler function
