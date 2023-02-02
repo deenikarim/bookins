@@ -1,5 +1,7 @@
 create_table("restriction_types") {
+
   t.Column("id", "integer", {primary: true})
-  t.Column("restriction_name", "integer", {})
+  t.Column("restriction_name", "string", {"default": ""})
 
 }
+

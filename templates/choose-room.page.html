@@ -1,0 +1,23 @@
+{{template "base" .}} <!-- using the base layout template-->
+
+{{define "content"}}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+          <h1>choose a room</h1>
+        <!--range through whatever rooms are available-->
+        <!--
+        whatever we get from the "rooms" variable in our handler, we want to pass to a template and display it-->
+        {{$rooms := index .Data "rooms"}}
+
+        <!--ranging through the "rooms" variable in our handler-->
+        {{range $rooms}}
+            {{.RoomName}} <br>
+        {{end}}
+
+
+      </div>
+    </div>
+  </div>
+
+{{end}}

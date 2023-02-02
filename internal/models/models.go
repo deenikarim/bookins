@@ -2,7 +2,7 @@ package models
 
 import "time"
 
-//Reservation holds a reservation data structure (working server side validation)
+/*Reservation holds a reservation data structure (working server side validation)
 type Reservation struct {
 	FirstName          string
 	LastName           string
@@ -14,6 +14,7 @@ type Reservation struct {
 	TermsAndConditions string
 	State              string
 }
+*/
 
 //User is the users model(describe our user)
 type User struct {
@@ -40,13 +41,13 @@ type RoomRestriction struct {
 	ID                int
 	StartDate         time.Time
 	EndDate           time.Time
-	RoomID            string
-	ReservationID     string
+	RoomID            int
+	ReservationID     int
 	RestrictionTypeID int
 	CreatedAt         time.Time
 	UpdatedAt         time.Time
-	Room              Room         //because roomID, it might include room information
-	Reservation       Reservations //because reservationID, it might include reservation information
+	Room              Room        //because roomID, it might include room information
+	Reservation       Reservation //because reservationID, it might include reservation information
 	RestrictionTypes  RestrictionTypes
 }
 
@@ -58,16 +59,16 @@ type RestrictionTypes struct {
 	UpdatedAt       time.Time
 }
 
-//Reservations is the reservation model
-type Reservations struct {
-	ID        int
+//Reservation is the reservation model
+type Reservation struct {
+	ID        int //from id to update_at needs to save in the database
 	FirstName string
 	LastName  string
 	Email     string
 	Phone     string
 	StartDate time.Time
 	EndDate   time.Time
-	RoomID    string
+	RoomID    int
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Room      Room //included all the room information here

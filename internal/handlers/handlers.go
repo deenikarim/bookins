@@ -2,7 +2,6 @@ package handlers
 
 import (
 	"encoding/json"
-	"fmt"
 	"github.com/deenikarim/bookings/internal/config"
 	"github.com/deenikarim/bookings/internal/driver"
 	"github.com/deenikarim/bookings/internal/forms"
@@ -12,6 +11,8 @@ import (
 	"github.com/deenikarim/bookings/internal/repository"
 	"github.com/deenikarim/bookings/internal/repository/dbRepo"
 	"net/http"
+	"strconv"
+	"time"
 )
 
 /**************************PART-4: USING THE APP_CONFIG IN THE HANDLER PACKAGE********************/
@@ -52,54 +53,105 @@ func NewHandlers(r *Repository) {
 //Home create the home page handler function
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, r, "home.page.html", &models.TemplateData{})
+	renders.Template(w, r, "home.page.html", &models.TemplateData{})
 	m.DB.AllUsers()
 }
 
 //About create the about page handler function
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, r, "about.page.html", &models.TemplateData{})
+	renders.Template(w, r, "about.page.html", &models.TemplateData{})
 
 }
 
 //Contact create the Contact us page handler function
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, r, "contact.page.html", &models.TemplateData{})
+	renders.Template(w, r, "contact.page.html", &models.TemplateData{})
 
 }
 
 //Generals create the generals page handler function
 func (m *Repository) Generals(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, r, "generals.page.html", &models.TemplateData{})
+	renders.Template(w, r, "generals.page.html", &models.TemplateData{})
 
 }
 
 //Majors create the Majors page handler function
 func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, r, "majors.page.html", &models.TemplateData{})
+	renders.Template(w, r, "majors.page.html", &models.TemplateData{})
 
 }
 
 //SearchAvailability create the SearchAvailability page handler function
 func (m *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, r, "search-availability.page.html", &models.TemplateData{})
+	renders.Template(w, r, "search-availability.page.html", &models.TemplateData{})
 
 }
 
 //PostSearchAvailability create the handler for the POST request
 func (m *Repository) PostSearchAvailability(w http.ResponseWriter, r *http.Request) {
 	//get the form data which is the input namespace ok of the request
+	// this grabs the start and end from form post and stores it in start and end variables as strings because anything
+	// you grab from a form post is a string
 	start := r.Form.Get("start")
 	end := r.Form.Get("end")
 
-	w.Write([]byte(fmt.Sprintf("start date is %s and end date is %s", start, end)))
-	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	//renders.RenderTemplate(w, "search-availability.page.html", &models.TemplateData{})
+	//convert our string from above to time.Time
+	//// 2020-01-01 -- 01/02 03:04:05PM '06 -0700 format we expect our dates to be in
+	layout := "2006-01-02"
+	startDate, err := time.Parse(layout, start)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	endDate, err := time.Parse(layout, end)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	//calling the database function that does search for availability for all rooms
+	rooms, err := m.DB.SearchAvailabilityForAllRooms(startDate, endDate)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	//let's now see what is the rooms variable by printing it to the screen ot terminal
+
+	//when there is no availability there will be nothing in that slice(empty slice)
+	if len(rooms) == 0 {
+		//no availability by showing an error message
+		//pass a value("error message") into our session
+		m.App.Session.Put(r.Context(), "error", "no room available")
+		http.Redirect(w, r, "/search-availability", http.StatusSeeOther)
+		return
+	} //otherwise, there is availability
+
+	//making a map in order use it to store our rooms variable
+	data := make(map[string]interface{})
+	//store our rooms in there
+	data["rooms"] = rooms
+
+	//store some information entered in by the user like start and end dates before rendering the page
+	res := models.Reservation{
+		StartDate: startDate,
+		EndDate:   endDate,
+		//RoomID:    0,leave it empty and populate that when they click on a room
+	}
+	//now store the res variable into the session so now we that necessary information available to us
+	m.App.Session.Put(r.Context(), "reservation", res)
+
+	//now need to render the template(choose-room template) and pass it data
+	renders.Template(w, r, "choose-room.page.html", &models.TemplateData{
+		Data: data,
+	})
+
+	//w.Write([]byte(fmt.Sprintf("start date is %s and end date is %s", start, end)))
 
 }
 
@@ -139,7 +191,7 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	data["reservation"] = emptyReservation //stores the empty reservation "TIP: needs to have the same name used to store the reservation in POST-RESERVATION"
 
 	//calling the renderTemplate function inside the handler function to render page to the browser
-	renders.RenderTemplate(w, r, "make-reservation.page.html", &models.TemplateData{
+	renders.Template(w, r, "make-reservation.page.html", &models.TemplateData{
 		//send data to the template
 		Form: forms.New(nil), //this includes or create  an empty form
 		Data: data,           //adding an empty reservation input form
@@ -158,17 +210,39 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	//converting our date in string format that our model expects
+	sd := r.Form.Get("start_date")
+	ed := r.Form.Get("end_date")
+
+	//convert our string from above to time.Time
+	//// 2020-01-01 -- 01/02 03:04:05PM '06 -0700 format we expect our dates to be in
+	layout := "2006-01-02"
+	startDate, err := time.Parse(layout, sd)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	endDate, err := time.Parse(layout, ed)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	//convert output room id as a string or whatever into an integer
+	roomID, err := strconv.Atoi(r.Form.Get("room_id"))
+	if err != nil {
+		helpers.ServerError(w, err)
+		return //if we don't add the RETURN, it will not stop executing at this point but i want to stop
+	}
+
 	//initializes and populate the reservation struct Type
 	reservation := models.Reservation{
-		FirstName:          r.Form.Get("first_name"), //Get something from post request
-		LastName:           r.Form.Get("last_name"),
-		Email:              r.Form.Get("email"),
-		Phone:              r.Form.Get("phone"),
-		Address:            r.Form.Get("address"),
-		AddressTwo:         r.Form.Get("address_two"),
-		City:               r.Form.Get("city"),
-		TermsAndConditions: r.Form.Get("terms_and_conditions"),
-		State:              r.Form.Get("state"),
+		FirstName: r.Form.Get("first_name"), //Get something from post request
+		LastName:  r.Form.Get("last_name"),
+		Email:     r.Form.Get("email"),
+		Phone:     r.Form.Get("phone"),
+		StartDate: startDate,
+		EndDate:   endDate,
+		RoomID:    roomID,
 	}
 
 	//creating a form object
@@ -178,7 +252,7 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 	//passing it through validation, for now it has one rule which is it has to have a first name
 	//form.Has("first_name", r)
 
-	form.Required("first_name", "last_name", "email", "phone", "address", "address_two", "city")
+	form.Required("first_name", "last_name", "email")
 	form.MinLength("first_name", 3)
 	//IsEmail checks for valid email address
 	form.IsEmail("email")
@@ -190,12 +264,39 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		data["reservation"] = reservation //store the reservation variable from above in here
 
 		//calling the renderTemplate function inside the handler function to render page to the browser
-		renders.RenderTemplate(w, r, "make-reservation.page.html", &models.TemplateData{
+		renders.Template(w, r, "make-reservation.page.html", &models.TemplateData{
 			//send data to the template
 			//Form: forms.New(nil), //this includes an empty form
 			Form: form,
 			Data: data, //passing the reservation: NOW have the information the user entered
 		})
+		return
+	}
+
+	//write off our reservation information to the database(save it to our database)
+	//newReservationID purposes: use the reservation along with other information to build a room restriction
+	newReservationID, err := m.DB.InsertReservation(reservation)
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+
+	/*AFTER INSERTING THE RESERVATION WE NEED TO INSERT THE ROOM RESERVATION RESTRICTIONS BEFORE REDIRECT THEM*/
+
+	//so now we are going to use the newReservationID along with all the required information to build up
+	//a room restriction model and send it back to a function called InsertRoomRestriction()
+	restriction := models.RoomRestriction{
+		StartDate:         startDate,
+		EndDate:           endDate,
+		RoomID:            roomID,
+		ReservationID:     newReservationID,
+		RestrictionTypeID: 1,
+	}
+
+	//write off our restriction information to the database(save it to our database)
+	err = m.DB.InsertRoomRestriction(restriction)
+	if err != nil {
+		helpers.ServerError(w, err)
 		return
 	}
 
@@ -230,7 +331,7 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	data["reservation"] = reservation //store the reservation variable created above in our TemplateData under field "Data"
 
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.RenderTemplate(w, r, "reservation-summary.page.html", &models.TemplateData{
+	renders.Template(w, r, "reservation-summary.page.html", &models.TemplateData{
 		Data: data, //passing the reservation pulled out of the session to the template
 	})
 

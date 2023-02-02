@@ -24,8 +24,8 @@ var pathToTemplate = "./templates"
 //app hold the type AppConfig (a pointer to AppConfig)
 var app *config.AppConfig
 
-//NewTemplates set the config settings for the templates
-func NewTemplates(a *config.AppConfig) {
+//NewRenderer set the config settings for the templates
+func NewRenderer(a *config.AppConfig) {
 	app = a
 }
 
@@ -52,10 +52,10 @@ func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 
 /********************* PART-2: RENDERING TEMPLATES TO THE BROWSER WINDOW **************************/
 
-//RenderTemplate a function for rendering templates
+//Template a function for rendering templates
 //what the function does is that it take a respondWriter and the name of a template you want to parse and read
 // it to the browser
-func RenderTemplate(w http.ResponseWriter, r *http.Request, html string, td *models.TemplateData) error {
+func Template(w http.ResponseWriter, r *http.Request, html string, td *models.TemplateData) error {
 
 	// get the template cache
 	/*tc, err := CreateTemplateCache()

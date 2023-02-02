@@ -71,6 +71,10 @@ func run() (*driver.DB, error) {
 
 	//You need to tell golang: what am I going to put into the session(SESSION PART)
 	gob.Register(models.Reservation{})
+	gob.Register(models.Room{})
+	gob.Register(models.RoomRestriction{})
+	gob.Register(models.User{})
+	gob.Register(models.RestrictionTypes{})
 
 	//SESSIONS MODULE:5; SETTING UP A NEW SESSION MANAGER
 	// Initialize a new session manager and configure the session lifetime.
@@ -112,8 +116,8 @@ func run() (*driver.DB, error) {
 
 	/*from render package ** INITIALIZE RENDER ***/
 	/**/
-	//calling the NewTemplates function in the main.go ** INITIALIZE RENDER **
-	renders.NewTemplates(&app)
+	//calling the NewRenderer function in the main.go ** INITIALIZE RENDER **
+	renders.NewRenderer(&app)
 	/**/
 
 	//setting up the app variable and populating when the run() function is called

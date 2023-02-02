@@ -82,7 +82,7 @@ func getRoute() http.Handler {
 	/*from render package ** INITIALIZE RENDER ***/
 	/**/
 	//calling the NewTemplates function in the main.go ** INITIALIZE RENDER **
-	renders.NewTemplates(&app)
+	renders.NewRenderer(&app)
 	/**/
 
 	//NOW GETTING OUR ROUTES

@@ -30,8 +30,8 @@ func TestAddDefaultData(t *testing.T) {
 
 }
 
-//TestRenderTemplate write test for our RenderTemplate function
-func TestRenderTemplate(t *testing.T) {
+//TestTemplate write test for our Template function
+func TestTemplate(t *testing.T) {
 	//correct path to templates for testing within render package
 	pathToTemplate = "./../../templates"
 
@@ -53,14 +53,14 @@ func TestRenderTemplate(t *testing.T) {
 	//using our myWriter instead ResponseWriter function
 	var ww myWriter
 
-	//call the RenderTemplate
-	err = RenderTemplate(&ww, r, "majors.page.html", &models.TemplateData{})
+	//call the Template
+	err = Template(&ww, r, "majors.page.html", &models.TemplateData{})
 	if err != nil {
 		t.Error("error rendering template to the browser")
 	}
 
 	//checking for something that is not in the template cache(non-existent)
-	err = RenderTemplate(&ww, r, "non-existent.page.html", &models.TemplateData{})
+	err = Template(&ww, r, "non-existent.page.html", &models.TemplateData{})
 	//if it successfully renders a non-existent template, well, it should not be doing that
 	if err == nil {
 		t.Error("rendered template to the browser that doesn't exist")
@@ -71,7 +71,7 @@ func TestRenderTemplate(t *testing.T) {
 //TestNewTemplates write test for our NewTemplates function
 func TestNewTemplates(t *testing.T) {
 	//code: this doesn't do anything so this should be sufficient to go through testing process
-	NewTemplates(app)
+	NewRenderer(app)
 }
 
 //TestCreateTemplateCache write test for our CreateTemplateCache function
