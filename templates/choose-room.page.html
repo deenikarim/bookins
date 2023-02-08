@@ -11,10 +11,14 @@
         {{$rooms := index .Data "rooms"}}
 
         <!--ranging through the "rooms" variable in our handler-->
+        <ul>
         {{range $rooms}}
-            {{.RoomName}} <br>
+          <li>
+            <a href="/choose-room/{{.ID}}">{{.RoomName}}</a>
+            <!--{.ID}} pulls it out the iteration of the rooms variable and shows it there-->
+          </li>
         {{end}}
-
+        </ul>
 
       </div>
     </div>

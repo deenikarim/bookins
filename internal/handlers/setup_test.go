@@ -15,6 +15,7 @@ import (
 	"net/http"
 	"os"
 	"path/filepath"
+	"testing"
 	"time"
 )
 
@@ -29,10 +30,7 @@ var pathToTemplate = "./../../templates"
 //Function variable for the func type
 var functions = template.FuncMap{}
 
-//getRoute we need to have access to our routes otherwise we can't call the handlers at all
-//since it's going to give us routes, it will hand back exactly what our route does
-func getRoute() http.Handler {
-
+func TestMain(m *testing.M) {
 	//change this to true when in production, pull from appConfig
 	app.InProduction = false
 
@@ -74,7 +72,7 @@ func getRoute() http.Handler {
 	/**/
 	// NewRepo: calling the NewRepo in the main.go
 	//getting our NewRepo function, outcome: create the repository variable
-	repo := NewRepo(&app) //argument:: referencing to "app" to have access to appConfig struct type
+	repo := NewTestRepo(&app) //argument:: referencing to "app" to have access to appConfig struct type
 	//after the repository variable is created, pass it back to NewHandlers
 	NewHandlers(repo) //NOW:: to make changes to handlers function in order to have access to repository
 	/**/
@@ -84,6 +82,14 @@ func getRoute() http.Handler {
 	//calling the NewTemplates function in the main.go ** INITIALIZE RENDER **
 	renders.NewRenderer(&app)
 	/**/
+
+	os.Exit(m.Run()) //before it exits run the tests
+
+}
+
+//getRoute we need to have access to our routes otherwise we can't call the handlers at all
+//since it's going to give us routes, it will hand back exactly what our route does
+func getRoute() http.Handler {
 
 	//NOW GETTING OUR ROUTES
 	mux := chi.NewRouter()

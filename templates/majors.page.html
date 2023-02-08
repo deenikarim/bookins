@@ -45,14 +45,8 @@
     <script>
         // for the colorButton
         document.getElementById('check-availability-button').addEventListener('click', function () {
-            //use the notify function created in the script tags
-            ////notify("text is a message", "warning")
 
-            ////notifyModal("success", "<em> congratulation success</em>", "success", "cool")
-            //attention.toast({msg: "successful in signing"});
-            //attention.success({});
-            ///attention.toast({});
-
+            //using this variable as an argument in attention.custom
             let html = `
             <form action = " " method = "post" class="needs-validation" novalidate id="check-availability-form">
                 <div class="form-row">
@@ -72,13 +66,89 @@
                 </div>
             </form>
             `
-            attention.custom({ msg: html, title: "choose your dates" });
+
+            attention.custom({
+                msg: html,
+                title: "choose your dates",
+
+                //SPECIFYING willOpen AS PART OF MY CONSTRUCTOR: generalizing our custom function
+                //willOpen is set to this function and is being passed over to prompt function under custom
+                willOpen: () => {
+                    const elem = document.getElementById('reservation-dates-modal');
+                    const rangepicke = new DateRangePicker(elem, {
+                        clearBtn: true,
+                        todayHighlight: true,
+                        minDate: new Date(),
+                        format: "yyyy-mm-dd",
+                    })
+                },
+
+                //after it is opens it is going to remove the disabled attribute on the input element
+                didOpen: () => {
+                    document.getElementById('start').removeAttribute('disabled');
+                    document.getElementById('end').removeAttribute('disabled');
+                },
 
 
+                //callback is a function, and it takes an argument or parameter of another function, which
+                // in this case is "result" which handed back to me by the js module
+                callback: function (result) {
+                    //what is inside callback will get executed if result is not empty or there is some result
+                    // or did not click the cancel button
+                    console.log("called");
 
+                    //create a variable form and store the form in it so have a reference to that form
+                    let form = document.getElementById("check-availability-form");
+                    //create a formData thus the kind of data or information that is sent in a POST request
+                    let formData = new FormData(form); //contains all the inputs from the form variable
+                    //adding our CSRF protection by appending
+                    formData.append("csrf_token", "{{.CSRFToken}}");
+
+                    //need a room id to be able to check availability for a room
+                    // roomID = 1 in a string form because that is what you put in a form request
+                    formData.append("room_id", "2"); //can pass this info
+
+
+                    //fetch API will do exactly what I tell it to do, below says to go this URL which have a
+                    // handler called
+                    fetch('/search-availability-json',{
+                        method: "post",
+                        body: formData, //all the info I want to Post, to send along in that my form data
+
+                    })
+                        //then get the response(whatever is handed) and convert it to JSON
+                        .then(response => response.json())
+                        //once that is done, I am going to take data which is my nicely passed json and do something with it
+                        .then(data => {
+                            //what to do after getting that data
+                            if (data.ok) {
+                                //if there is a room is available
+                                attention.custom({
+                                    icon: 'success',
+                                    showConfirmButton: false, //remove the confirm button on the dialog box
+                                    msg: '<p>Room is available!</p>'
+                                        + '<p> <a href="/book-room?id='
+                                        //getting our room id
+                                        + data.room_id
+                                        + '&s='
+                                        + data.start_date
+                                        + '&e='
+                                        + data.end_date
+                                        + '" class="btn btn-primary">'
+                                        + 'book now! </a> </p>',
+                                    //the above query should give us a valid URL
+                                })
+                            } else {
+                                attention.error({
+                                    msg: "no availability found",
+                                })
+                            }
+                        })
+
+                }
+            });
         })
 
     </script>
-
 
 {{end}}

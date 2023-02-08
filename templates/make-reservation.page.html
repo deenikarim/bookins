@@ -5,14 +5,23 @@
   <div class="container">
     <div class="row">
       <div class="col">
-        <h1>Make Reservation</h1>
-        <p><strong>Reservation Details</strong></p>
-
         <!--storing the value of my empty reservation the first time the page is display-->
         {{$res := index .Data "reservation"}}
 
+        <h1>Make Reservation</h1>
+        <p><strong>Reservation Details</strong><br>
+          Room: {{$res.Room.RoomName}} <br>
+          <!--print out the start and end date from the StringMap-->
+          Arrival: {{index .StringMap "start_date"}} <br>
+          Departure: {{index .StringMap "end_date"}}
+
+        </p>
+
         <form action="/make-reservation" method="post" novalidate class="">
           <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+          <input type="hidden" name="start_date" value="{{index .StringMap "start_date"}}">
+          <input type="hidden" name="end_date" value="{{index .StringMap "end_date"}}">
+          <input type="hidden" name="room_id"  value="{{$res.RoomID}}">
 
           <div class="form-group">
               <label for="firstName">First Name</label>
@@ -55,20 +64,6 @@
             <input type="text" name="phone" class="form-control {{with .Form.Errors.Get "phone"}} is-invalid {{end}}"
                    id="phone" placeholder="123-4567-890" required value="{{$res.Phone}}" />
           </div>
-
-          <div class="form-group">
-            <label for="start_date">Start Date</label>
-            <input type="text" name="start_date" class="form-control"
-                   id="start_date"/>
-          </div>
-
-          <div class="form-group">
-            <label for="end_date">End Date</label>
-            <input type="text" name="end_date" class="form-control"
-                   id="end_date"/>
-          </div>
-
-          <input type="hidden" name="room_id"  value="1">
 
           <hr>
           <button type="submit" class="btn btn-primary">Submit</button>

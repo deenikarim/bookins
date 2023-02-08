@@ -83,6 +83,8 @@
                 const rangepicke = new DateRangePicker(elem, {
                     clearBtn: true,
                     todayHighlight: true,
+                    minDate: new Date(),
+                    format: "yyyy-mm-dd",
                 })
             },
 
@@ -107,22 +109,45 @@
                 //adding our CSRF protection by appending
                 formData.append("csrf_token", "{{.CSRFToken}}");
 
+                //need a room id to be able to check availability for a room
+                // roomID = 1 in a string form because that is what you put in a form request
+                formData.append("room_id", "1"); //can pass this info
 
-
+                
                 //fetch API will do exactly what I tell it to do, below says to go this URL which have a
                 // handler called
                 fetch('/search-availability-json',{
                     method: "post",
-                    body: formData, //all the infor I want to Post, to send along in that my form data
+                    body: formData, //all the info I want to Post, to send along in that my form data
+
                 })
                     //then get the response(whatever is handed) and convert it to JSON
                     .then(response => response.json())
-                    //once that is done, I am going to take data which is my nicely passed json
+                    //once that is done, I am going to take data which is my nicely passed json and do something with it
                     .then(data => {
                         //what to do after getting that data
-                        console.log(data);
-                        console.log(data.ok);
-                        console.log(data.message);
+                       if (data.ok) {
+                           //if there is a room is available
+                           attention.custom({
+                               icon: 'success',
+                               showConfirmButton: false, //remove the confirm button on the dialog box
+                               msg: '<p>Room is available!</p>'
+                                   + '<p> <a href="/book-room?id='
+                                   //getting our room id
+                                   + data.room_id
+                                   + '&s='
+                                   + data.start_date
+                                   + '&e='
+                                   + data.end_date
+                                   + '" class="btn btn-primary">'
+                                   + 'book now! </a> </p>',
+                               //the above query should give us a valid URL
+                           })
+                       } else {
+                           attention.error({
+                               msg: "no availability found",
+                           })
+                       }
                     })
 
             }

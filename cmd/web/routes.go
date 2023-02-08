@@ -31,6 +31,9 @@ func routes(app *config.AppConfig) http.Handler {
 	mux.Get("/reservation-summary", handlers.Repo.ReservationSummary)
 
 	mux.Get("/search-availability", handlers.Repo.SearchAvailability)
+	mux.Get("/choose-room/{id}", handlers.Repo.ChooseRoom) //chi router
+	// handles the connecting of book now URL to make-reservation page(should have the same URL path as the one defined in General page)
+	mux.Get("/book-room", handlers.Repo.BookRoom)
 
 	//route to handle the POST request method
 	mux.Post("/search-availability", handlers.Repo.PostSearchAvailability)
