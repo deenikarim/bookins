@@ -1,0 +1,41 @@
+{{template "base" .}} <!-- using the base layout template-->
+
+{{define "content"}}
+  <div class="container">
+    <div class="row">
+      <div class="col">
+        <h1>login</h1>
+        <form method="post" action="/user/login">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+
+                <div class="form-group">
+                  <label for="Email">Email</label>
+                  {{with .Form.Errors.Get "email"}}
+                    <!--want to display something(display whatever the value is from .Form.Errors.Get "first_name") -->
+                    <label class="text-danger"> {{.}} </label>
+                  {{end}}
+                  <input type="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid {{end}}"
+                         id="inputEmail" value="" name="email"/>
+                </div>
+
+                <div class="form-group">
+                  <label for="password">Password</label>
+                  {{with .Form.Errors.Get "password"}}
+                    <!--want to display something(display whatever the value is from .Form.Errors.Get "first_name") -->
+                    <label class="text-danger"> {{.}} </label>
+                  {{end}}
+                  <input type="password" class="form-control {{with .Form.Errors.Get "email"}} is-invalid {{end}}"
+                         id="password" value="" name="password"/>
+                </div>
+                <hr>
+
+                <input type="submit"class="btn btn-primary" value="submit">
+        </form>
+      </div>
+    </div>
+  </div>
+
+{{end}}
+
+
+

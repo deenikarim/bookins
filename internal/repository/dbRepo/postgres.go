@@ -2,7 +2,9 @@ package dbRepo
 
 import (
 	"context"
+	"errors"
 	"github.com/deenikarim/bookings/internal/models"
+	"golang.org/x/crypto/bcrypt"
 	"time"
 )
 
@@ -186,4 +188,115 @@ func (m *postgresDBRepo) GetRoomByID(id int) (models.Room, error) {
 	}
 
 	return room, nil
+}
+
+//TODO: CREATING DATABASE FUNCTIONS FOR AUTHENTICATION
+
+//GetUserByID it goes and get a user by ID
+func (m *postgresDBRepo) GetUserByID(id int) (models.User, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	var u models.User
+
+	//defined query for getting user by ID
+	query := `
+		select id, first_name, last_name, email, password, access_level,created_at, updated_at 
+		from users where id = $1`
+
+	//because we know we are getting only one row, we can use queryRowContext
+	//execute the defined query //use when expecting only one row
+	row := m.DB.QueryRowContext(ctx, query, id) //get the rows and then scan the row
+
+	//copies the columns from the matched row into the values pointed to. todo: scan to the variable called u
+	err := row.Scan(
+		&u.ID,
+		&u.FirstName,
+		&u.LastName,
+		&u.Email,
+		&u.Password,
+		&u.AccessLevel,
+		&u.CreatedAt,
+		&u.UpdatedAt,
+	)
+	if err != nil {
+		//if there is an error
+		return u, err
+	}
+	//otherwise no error
+	return u, nil
+}
+
+//UpdateUser updates a user in the database
+func (m *postgresDBRepo) UpdateUser(u *models.User) error {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	//defined query for updating users
+	query := `
+		update users set first_name = $1, last_name = $2, email = $3, access_level=$4, updated_at =$5
+		`
+	//execute query without returning any rows
+	_, err := m.DB.ExecContext(ctx, query,
+		u.FirstName,
+		u.LastName,
+		u.Email,
+		u.AccessLevel,
+		u.UpdatedAt,
+	)
+
+	if err != nil {
+		//if there is an error
+		return err
+	}
+	//otherwise no error
+	return nil
+}
+
+//Authenticate performs the authentication of users
+func (m *postgresDBRepo) Authenticate(email, testPassword string) (int, string, error) {
+	ctx, cancel := context.WithTimeout(context.Background(), 3*time.Second)
+	defer cancel()
+
+	//todo: store the information we get from the database
+	//create a variable that will the ID of the authenticated user if things returned as they should
+	//in other words, if they typed in the right password thus they have successfully been authenticated
+	var id int
+	//will hold the hash password for the authenticated user
+	var hashedPassword string
+
+	//todo: now we want to query the database, to see if we can find a user and store the information returned into the variables
+	query := `
+		select id, password from users where email = $1`
+
+	////execute the defined query //use when expecting only one row which is email
+	row := m.DB.QueryRowContext(ctx, query, email) //substitute query with empty value
+
+	//scan the information received into some variable
+	err := row.Scan(&id, &hashedPassword)
+	if err != nil {
+		return 0, "", err
+	}
+	//otherwise, at this point, if they have entered valid password and that matches an email in our database
+
+	//todo: need to compare their passwords against our passwords [to compare their hash that we grab from
+	//  database against a hash created from the password that the user typed in the form]
+	/*TIP: all what are we doing is say, hey here is the hashedPassword that we pulled out of the database
+	does this hash match the hash you are testing by running it against testPassword which is whatever
+	the user typed in the form
+	*/
+	err = bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(testPassword))
+	//if they did match then all is good and were successful and can continue. Otherwise, not successful
+	if err == bcrypt.ErrMismatchedHashAndPassword {
+		//if there is error when trying to do comparison between hashes and passwords thus they do not match
+		//want to do something else or return something
+		return 0, "", errors.New("incorrect password")
+	} else if err != nil {
+		// if there is error and is something else other than mismatched
+		return 0, "", err
+	}
+
+	//todo: if we get pass all of the above, then we are ready to return the necessary information because
+	// the user can now be logged in
+	return id, hashedPassword, nil
 }

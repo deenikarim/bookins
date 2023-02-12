@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/deenikarim/bookings/internal/config"
 	"github.com/deenikarim/bookings/internal/driver"
 	"github.com/deenikarim/bookings/internal/forms"
@@ -10,6 +11,7 @@ import (
 	"github.com/deenikarim/bookings/internal/renders"
 	"github.com/deenikarim/bookings/internal/repository"
 	"github.com/deenikarim/bookings/internal/repository/dbRepo"
+	"log"
 	"net/http"
 	"strconv"
 	"strings"
@@ -62,42 +64,42 @@ func NewHandlers(r *Repository) {
 //Home create the home page handler function
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.Template(w, r, "home.page.html", &models.TemplateData{})
+	renders.Template(w, r, "home.page.gohtml", &models.TemplateData{})
 	m.DB.AllUsers()
 }
 
 //About create the about page handler function
 func (m *Repository) About(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.Template(w, r, "about.page.html", &models.TemplateData{})
+	renders.Template(w, r, "about.page.gohtml", &models.TemplateData{})
 
 }
 
 //Contact create the Contact us page handler function
 func (m *Repository) Contact(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.Template(w, r, "contact.page.html", &models.TemplateData{})
+	renders.Template(w, r, "contact.page.gohtml", &models.TemplateData{})
 
 }
 
 //Generals create the generals page handler function
 func (m *Repository) Generals(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.Template(w, r, "generals.page.html", &models.TemplateData{})
+	renders.Template(w, r, "generals.page.gohtml", &models.TemplateData{})
 
 }
 
 //Majors create the Majors page handler function
 func (m *Repository) Majors(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.Template(w, r, "majors.page.html", &models.TemplateData{})
+	renders.Template(w, r, "majors.page.gohtml", &models.TemplateData{})
 
 }
 
 //SearchAvailability create the SearchAvailability page handler function
 func (m *Repository) SearchAvailability(w http.ResponseWriter, r *http.Request) {
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.Template(w, r, "search-availability.page.html", &models.TemplateData{})
+	renders.Template(w, r, "search-availability.page.gohtml", &models.TemplateData{})
 
 }
 
@@ -159,7 +161,7 @@ func (m *Repository) PostSearchAvailability(w http.ResponseWriter, r *http.Reque
 	m.App.Session.Put(r.Context(), "reservation", res)
 
 	//now need to render the template(choose-room template) and pass it data
-	renders.Template(w, r, "choose-room.page.html", &models.TemplateData{
+	renders.Template(w, r, "choose-room.page.gohtml", &models.TemplateData{
 		Data: data,
 	})
 
@@ -275,7 +277,7 @@ func (m *Repository) Reservation(w http.ResponseWriter, r *http.Request) {
 	//AT THIS POINT
 
 	//calling the renderTemplate function inside the handler function to render page to the browser
-	renders.Template(w, r, "make-reservation.page.html", &models.TemplateData{
+	renders.Template(w, r, "make-reservation.page.gohtml", &models.TemplateData{
 		//send data to the template
 		Form: forms.New(nil), //this includes or create  an empty form
 		Data: data,           //adding an empty reservation input form
@@ -367,9 +369,9 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		data := make(map[string]interface{})
 		data["reservation"] = reservation //store the reservation variable from above in here
 
-		http.Error(w, "my own error message", http.StatusSeeOther)
+		//http.Error(w, "my own error message", http.StatusSeeOther)
 		//calling the renderTemplate function inside the handler function to render page to the browser
-		renders.Template(w, r, "make-reservation.page.html", &models.TemplateData{
+		renders.Template(w, r, "make-reservation.page.gohtml", &models.TemplateData{
 			//send data to the template
 			//Form: forms.New(nil), //this includes an empty form
 			Form: form,
@@ -406,7 +408,40 @@ func (m *Repository) PostReservation(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	//taking users to reservation summary page
+	//TODO: SEND NOTIFICATION THROUGH EMAIL TO GUEST
+	//build the content of the email message
+	htmlMessage := fmt.Sprintf(`
+		<strong> Reservation Confirmation</strong><br>
+		Dear %s: <br>
+		This is to confirm your reservation from %s to %s.
+	`, reservation.FirstName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
+	msg := models.MailData{
+		To:       reservation.Email,
+		From:     "mike@example.com",
+		Subject:  "Reservation Confirmation",
+		Content:  htmlMessage,
+		Template: "basic.html", // will the name of the template inside the email-template folder
+	}
+	//send the message variable to the channel
+	m.App.MailChan <- msg
+
+	//TODO: SEND NOTIFICATION THROUGH EMAIL TO PROPERTY OWNER
+	//build the content of the email message
+	htmlMessage = fmt.Sprintf(`
+		<strong> Reservation Notification</strong><br>
+		Dear %s, <br>
+		A reservation has been made for %s from %s to %s.
+	`, reservation.Room.RoomName, reservation.StartDate.Format("2006-01-02"), reservation.EndDate.Format("2006-01-02"))
+	msg = models.MailData{
+		To:      "here@example.com",
+		From:    reservation.Email,
+		Subject: "Reservation Notification",
+		Content: htmlMessage,
+	}
+	//send the message variable to the channel
+	m.App.MailChan <- msg
+
+	//todo:taking users to reservation summary page
 	//how to put something into a session(now putting the reservation or whatever they have entered into a session)
 	//NOW LETS PUT ON RESERVATION BACK TO THE SESSION
 	m.App.Session.Put(r.Context(), "reservation", reservation)
@@ -445,7 +480,7 @@ func (m *Repository) ReservationSummary(w http.ResponseWriter, r *http.Request) 
 	stringMap["end_date"] = ed
 
 	//calling the renderTemplate function inside the handler function to render the home page to the browser
-	renders.Template(w, r, "reservation-summary.page.html", &models.TemplateData{
+	renders.Template(w, r, "reservation-summary.page.gohtml", &models.TemplateData{
 		Data:      data, //passing the reservation pulled out of the session to the template
 		StringMap: stringMap,
 	})
@@ -551,5 +586,137 @@ func (m *Repository) BookRoom(w http.ResponseWriter, r *http.Request) {
 
 	//now, we want to take the users to make reservation page
 	http.Redirect(w, r, "/make-reservation", http.StatusSeeOther)
+
+}
+
+//ShowLogin for displaying the login form for users to fill out to login in
+func (m *Repository) ShowLogin(w http.ResponseWriter, r *http.Request) {
+	//render login form
+	renders.Template(w, r, "login.page.gohtml", &models.TemplateData{
+		Form: forms.New(nil), //pass it with an empty form
+	})
+}
+
+//PostShowLogin handles the posting of login data and logging a user in.
+func (m *Repository) PostShowLogin(w http.ResponseWriter, r *http.Request) {
+	//well there are only two things coming out of the login form
+
+	//todo step-1 call the RenewToken() method when going a log in or log out in order to prevent session fixation
+	//  attacks
+	_ = m.App.Session.RenewToken(r.Context())
+
+	//todo step-2 parse the form
+	err := r.ParseForm()
+	if err != nil {
+		log.Println(err)
+	}
+
+	//todo step-3 get the two things that come out of the login form
+	email := r.Form.Get("email")
+	password := r.Form.Get("password")
+
+	//todo step-4 making sure that our form has all the necessary parameters
+	//creating a form object
+	form := forms.New(r.PostForm) //contains all those url values and the associate data
+
+	//passing it through validation
+	form.Required("email", "password")
+	//IsEmail checks for valid email address
+	form.IsEmail("email")
+
+	//if the form actually have errors or problems on it or in other words if it is not valid, then take the
+	// user back
+	if !form.Validate() {
+
+		//we want to take the user back to the login screen if things didn't work the way we expected or
+		// if the email and password are missing or don't match what we expect, then take the user back
+
+		//calling the renderTemplate function inside the handler function to render page to the browser
+		renders.Template(w, r, "login.page.gohtml", &models.TemplateData{
+			//send data to the template
+			Form: form, // pass it our form info
+		})
+		return
+	}
+
+	//todo: step-5 if it pass validation, then we want to authenticate the user
+	//calling the authenticate() method we created in postgres.go and get the data entered from the login page and
+	// use it for authentication
+	id, _, err := m.DB.Authenticate(email, password)
+	if err != nil {
+		log.Println(err)
+		m.App.Session.Put(r.Context(), "error", "invalid login credentials")
+		http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+		return
+	} //otherwise they have authenticated so can now log in
+
+	//todo: step-6 if they succeeded from authenticating then we need to log the user in
+	//we are going to that by storing the id returned from authentication in the session
+	m.App.Session.Put(r.Context(), "user_id", id)
+
+	//todo step-7 we need to take the user somewhere else after passing authentication process with an okay status
+	m.App.Session.Put(r.Context(), "flash", "logged in successfully")
+	http.Redirect(w, r, "/", http.StatusSeeOther)
+}
+
+//LogOut handles the logging out of users
+func (m *Repository) LogOut(w http.ResponseWriter, r *http.Request) {
+	//TODO: how to log a user out of a system
+	//so all we need to is to make sure that session variable called user_id does not exist
+	//SIMPLE SOLUTION: IS TO JUST DESTROY THE SESSION
+	_ = m.App.Session.Destroy(r.Context())
+	//renew session token update the session data to have a new token while maintaining the current session data
+	_ = m.App.Session.RenewToken(r.Context())
+
+	//then we need to redirect them to somewhere else otherwise they're just going to see white screen
+	http.Redirect(w, r, "/user/login", http.StatusSeeOther)
+
+}
+
+//AdminDashboard shows pages that are only available to logged-in users
+func (m *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request) {
+	renders.Template(w, r, "admin-dashboard.page.gohtml", &models.TemplateData{})
+}
+
+// AdminAllReservations shows all reservations inu admin tool
+func (m *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Request) {
+	renders.Template(w, r, "admin-all-dashboard.page.gohtml", &models.TemplateData{})
+
+}
+
+// AdminNewReservations shows all new reservations in admin tool
+func (m *Repository) AdminNewReservations(w http.ResponseWriter, r *http.Request) {
+	renders.Template(w, r, "admin-new-dashboard.page.gohtml", &models.TemplateData{})
+
+}
+
+// AdminReservationsCalendar displays the reservation calendar
+func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Request) {
+	renders.Template(w, r, "admin-reservations-calendar.page.gohtml", &models.TemplateData{})
+
+}
+
+// AdminShowReservation shows the reservation in the admin tool
+func (m *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Request) {
+
+}
+
+// AdminPostShowReservation posts a reservation
+func (m *Repository) AdminPostShowReservation(w http.ResponseWriter, r *http.Request) {
+
+}
+
+// AdminProcessReservation  marks a reservation as processed
+func (m *Repository) AdminProcessReservation(w http.ResponseWriter, r *http.Request) {
+
+}
+
+// AdminDeleteReservation deletes a reservation
+func (m *Repository) AdminDeleteReservation(w http.ResponseWriter, r *http.Request) {
+
+}
+
+// AdminPostReservationsCalendar handles post of reservation calendar
+func (m *Repository) AdminPostReservationsCalendar(w http.ResponseWriter, r *http.Request) {
 
 }

@@ -45,6 +45,16 @@ func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 	//adding CSRF protection and using noSurf csrf package
 	td.CSRFToken = nosurf.Token(r) //store CSRF token in the field of CSRFToken
 
+	//todo determine whether or not a user is logged in
+	// tip: if you recall, when a user is logged in, we setup session variable called user_id
+	//so if the user id exists, then is authenticated
+	if app.Session.Exists(r.Context(), "user_id") {
+		//calling the member IsAuthenticated from the templateData.go
+		//so if the value is greater than zero, then the user is logged in but if it is equal to zero then
+		//the user is not logged in
+		td.IsAuthenticated = 1 //default value for int is zero
+	}
+
 	return td // what it is doing now is taking the templateData and just returning
 }
 
@@ -55,7 +65,7 @@ func AddDefaultData(td *models.TemplateData, r *http.Request) *models.TemplateDa
 //Template a function for rendering templates
 //what the function does is that it take a respondWriter and the name of a template you want to parse and read
 // it to the browser
-func Template(w http.ResponseWriter, r *http.Request, html string, td *models.TemplateData) error {
+func Template(w http.ResponseWriter, r *http.Request, gohtml string, td *models.TemplateData) error {
 
 	// get the template cache
 	/*tc, err := CreateTemplateCache()
@@ -72,7 +82,7 @@ func Template(w http.ResponseWriter, r *http.Request, html string, td *models.Te
 	}
 
 	//get the individual templates from the myCache variable
-	t, ok := tc[html]
+	t, ok := tc[gohtml]
 	if !ok {
 		//log.Fatal("can not fetch the individual template")
 		return errors.New("can't get item from the cache")
@@ -106,7 +116,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 
 	//1.2: find all the necessary pages in the template folder
 	//Glob function returns the names of all files matching a pattern or nil if there is no match files
-	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.html", pathToTemplate))
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.page.gohtml", pathToTemplate))
 	//checking for error because Glob function also returns an error if it finds no files
 	if err != nil {
 		return myCache, err
@@ -135,7 +145,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		// BEGIN: check to see if something matches
 
 		//code below: look for any file in the template folder that end (.layout) or checking for the existence
-		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.html", pathToTemplate))
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.layout.gohtml", pathToTemplate))
 		if err != nil {
 			return myCache, err
 		}
@@ -144,7 +154,7 @@ func CreateTemplateCache() (map[string]*template.Template, error) {
 		//if the above code can find any file that ends with .layout.html, then want to do something with it
 		if len(matches) > 0 {
 			//if it is greater than 0 or finds a file with that extension, what do I do with it
-			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*layout.html", pathToTemplate))
+			ts, err = ts.ParseGlob(fmt.Sprintf("%s/*layout.gohtml", pathToTemplate))
 			if err != nil {
 				return myCache, err
 			}

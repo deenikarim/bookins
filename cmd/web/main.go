@@ -36,7 +36,25 @@ func main() {
 	if err != nil {
 		log.Fatal(err) //write to the terminal and stop the application
 	}
+	//close database
 	defer db.SQL.Close()
+
+	//todo: closes our channel
+	defer close(app.MailChan)
+
+	//todo: sets the channel up to listen for email messages
+	fmt.Println("start mail listener.....")
+	ListenForMail()
+
+	/**msg := models.MailData{
+			To:      "john@example.com",
+			From:    "mike@example.com",
+			Subject: "some ignored message",
+			Content: "",
+		}
+		//send the message variable to the channel
+		app.MailChan <- msg
+	**/
 
 	//writing to the console
 	fmt.Println(fmt.Sprintf("starting application on: %s", portNumber))
@@ -75,6 +93,10 @@ func run() (*driver.DB, error) {
 	gob.Register(models.RoomRestriction{})
 	gob.Register(models.User{})
 	gob.Register(models.RestrictionTypes{})
+
+	//todo: ************** create a channel **************************
+	MailChannel := make(chan models.MailData)
+	app.MailChan = MailChannel //populate our MailChan in the AppConfig with the variable mailChannel
 
 	//SESSIONS MODULE:5; SETTING UP A NEW SESSION MANAGER
 	// Initialize a new session manager and configure the session lifetime.

@@ -106,3 +106,22 @@ func (m *testDBRepo) GetRoomByID(id int) (models.Room, error) {
 	}
 	return room, nil
 }
+
+func (m *testDBRepo) GetUserByID(id int) (models.User, error) {
+	//TODO implement me
+	//panic("implement me")
+	var u models.User
+	return u, nil
+}
+
+func (m *testDBRepo) UpdateUser(u *models.User) error {
+	//TODO implement me
+	//panic("implement me")
+	return nil
+}
+
+func (m *testDBRepo) Authenticate(email, testPassword string) (int, string, error) {
+	//TODO implement me
+	//panic("implement me")
+	return 1, "", nil
+}

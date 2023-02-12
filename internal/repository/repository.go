@@ -22,4 +22,13 @@ type DatabaseRepo interface {
 
 	//GetRoomByID gets a room by ID
 	GetRoomByID(id int) (models.Room, error)
+
+	//GetUserByID returns a user by ID
+	GetUserByID(id int) (models.User, error)
+
+	//UpdateUser updates a user in the database
+	UpdateUser(u *models.User) error
+
+	//Authenticate performs the authentication
+	Authenticate(email, testPassword string) (int, string, error)
 }

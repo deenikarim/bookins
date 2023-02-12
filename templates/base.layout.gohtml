@@ -51,6 +51,24 @@
             <li class="nav-item">
               <a class="nav-link" href="/contact" tabindex="-1" aria-disabled="true">Contact Us</a>
             </li>
+            <!--changing the login to logout if a user is logged in-->
+              <li class="nav-item">
+               {{if eq .IsAuthenticated 1}}
+                  <li class="nav-item dropdown">
+                  <!--when you are login the user see the dashboard and logout link button on the navbar-->
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                          Admin
+                      </a>
+                      <ul class="dropdown-menu">
+                          <li><a class="dropdown-item" href="/admin/dashboard">Dashboard</a></li>
+                          <li><a class="dropdown-item" href="/user/logout">Layout</a></li>
+                      </ul>
+                  </li>
+                {{else}}
+                    <!--when you are logout the user see the login link button on the navbar-->
+                     <a class="nav-link" href="/user/login" tabindex="-1" aria-disabled="true">Login</a>
+                 {{end}}
+              </li>
           </ul>
         </div>
       </div>

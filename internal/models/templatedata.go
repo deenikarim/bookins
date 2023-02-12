@@ -15,4 +15,6 @@ type TemplateData struct {
 	Error     string
 	Warning   string
 	Form      *forms.Form //Available to every page whether it has a form or not
+	//todo:  we are going to use this field to determine whether a person is logged in
+	IsAuthenticated int
 }
