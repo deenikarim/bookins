@@ -125,3 +125,29 @@ func (m *testDBRepo) Authenticate(email, testPassword string) (int, string, erro
 	//panic("implement me")
 	return 1, "", nil
 }
+
+//AllReservations returns a slice of all reservation
+func (m *testDBRepo) AllReservations() ([]models.Reservation, error) {
+
+	//create a variable hold allReservation gotten from query
+	var reservations []models.Reservation
+
+	return reservations, nil
+}
+
+//AllNewReservations returns a slice of all reservation
+func (m *testDBRepo) AllNewReservations() ([]models.Reservation, error) {
+
+	var reservations []models.Reservation
+
+	return reservations, nil
+}
+
+//GetReservationByID returns one reservation by ID
+func (m *testDBRepo) GetReservationByID(id int) (models.Reservation, error) {
+
+	//will hold whatever we get from our query
+	var res models.Reservation
+
+	return res, nil
+}

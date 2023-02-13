@@ -10,10 +10,13 @@ import (
 	"html/template"
 	"net/http"
 	"path/filepath"
+	"time"
 )
 
 //functions: holds all the functions we want to make available to our templates
-var functions = template.FuncMap{}
+var functions = template.FuncMap{
+	"humanDate": HumanDate,
+}
 
 //pathToTemplate prevent hard coding of path
 var pathToTemplate = "./templates"
@@ -27,6 +30,12 @@ var app *config.AppConfig
 //NewRenderer set the config settings for the templates
 func NewRenderer(a *config.AppConfig) {
 	app = a
+}
+
+//HumanDate returns time in YYYY-MM-DD format
+func HumanDate(t time.Time) string {
+	//take the time that we passed and send it back in particular format
+	return t.Format("2006-01-02")
 }
 
 /*************************************************** END ****************************************/

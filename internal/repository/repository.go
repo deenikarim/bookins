@@ -31,4 +31,13 @@ type DatabaseRepo interface {
 
 	//Authenticate performs the authentication
 	Authenticate(email, testPassword string) (int, string, error)
+
+	//AllReservations returns a list of all reservation
+	AllReservations() ([]models.Reservation, error)
+
+	//AllNewReservations displays all reservations with default value of 0
+	AllNewReservations() ([]models.Reservation, error)
+
+	//GetReservationByID returns one reservation by ID
+	GetReservationByID(id int) (models.Reservation, error)
 }

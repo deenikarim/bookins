@@ -72,6 +72,7 @@ type Reservation struct {
 	CreatedAt time.Time
 	UpdatedAt time.Time
 	Room      Room //included all the room information here
+	Processed int
 }
 
 //MailData creates a message that hold the email messages that we will be sending

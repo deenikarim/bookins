@@ -56,7 +56,7 @@ func routes(app *config.AppConfig) http.Handler {
 		//what we need to do here is
 
 		// add a middleware
-		mux.Use(Auth) //make sure a user is authenticated
+		//mux.Use(Auth) //make sure a user is authenticated
 
 		//now let's create a new route
 		//The pattern is going to have (/admin) pre-attach to it so we want to add "dashboard" which will be
@@ -66,6 +66,7 @@ func routes(app *config.AppConfig) http.Handler {
 		mux.Get("/reservations-new", handlers.Repo.AdminNewReservations)
 		mux.Get("/reservations-all", handlers.Repo.AdminAllReservations)
 		mux.Get("/reservations-calendar", handlers.Repo.AdminReservationsCalendar)
+		mux.Get("/reservations/{src}/{id}", handlers.Repo.AdminShowReservation)
 		//mux.Post("/reservations-calendar", handlers.Repo.AdminPostReservationsCalendar)
 		//.Get("/process-reservation/{src}/{id}/do", handlers.Repo.AdminProcessReservation)
 		//mux.Get("/delete-reservation/{src}/{id}/do", handlers.Repo.AdminDeleteReservation)

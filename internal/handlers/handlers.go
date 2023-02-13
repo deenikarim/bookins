@@ -680,14 +680,37 @@ func (m *Repository) AdminDashboard(w http.ResponseWriter, r *http.Request) {
 
 // AdminAllReservations shows all reservations inu admin tool
 func (m *Repository) AdminAllReservations(w http.ResponseWriter, r *http.Request) {
-	renders.Template(w, r, "admin-all-dashboard.page.gohtml", &models.TemplateData{})
+	//calling the database function to get a list of all reservation
+	reservations, err := m.DB.AllReservations()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	//put the reservation in a variable so that we can pass it to the template
+	data := make(map[string]interface{})
+	data["reservations"] = reservations
+	//render the template to the browser along some data
+	renders.Template(w, r, "admin-all-dashboard.page.gohtml", &models.TemplateData{
+		Data: data,
+	})
 
 }
 
 // AdminNewReservations shows all new reservations in admin tool
 func (m *Repository) AdminNewReservations(w http.ResponseWriter, r *http.Request) {
-	renders.Template(w, r, "admin-new-dashboard.page.gohtml", &models.TemplateData{})
-
+	//calling the database function to get a list of all reservation
+	newReservations, err := m.DB.AllNewReservations()
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	//put the reservation in a variable so that we can pass it to the template
+	data := make(map[string]interface{})
+	data["new-reservations"] = newReservations
+	//render the template to the browser along some data
+	renders.Template(w, r, "admin-new-dashboard.page.gohtml", &models.TemplateData{
+		Data: data,
+	})
 }
 
 // AdminReservationsCalendar displays the reservation calendar
@@ -698,7 +721,39 @@ func (m *Repository) AdminReservationsCalendar(w http.ResponseWriter, r *http.Re
 
 // AdminShowReservation shows the reservation in the admin tool
 func (m *Repository) AdminShowReservation(w http.ResponseWriter, r *http.Request) {
+	//todo HOW TO GET THE RESERVATION AT THE END OF THE URL ---(NEED TWO THINGS)
+	// [1]:wants to get the source(all or new) to know where we are coming from because there are
+	//     two ways to get the showReservation
+	// [2]:wants the ID in  a form of an integer so that we can do our database query
 
+	//get the URL and split it up on / so we can find the indicated of the URL:: so when it happens
+	// it returns a slice of strings and we know how to find things on slice
+	explodedURL := strings.Split(r.RequestURI, "/")
+	//grab the ID from the URL and convert it to int because it returns a slice of strings
+	id, err := strconv.Atoi(explodedURL[4])
+	if err != nil {
+		helpers.ServerError(w, err)
+		return
+	}
+	//grab the src from the URL at position three and will tell us where we're getting information
+	src := explodedURL[3]
+	stringMap := make(map[string]string)
+	stringMap["src"] = src
+
+	//grab reservation from the database
+	reservation, err := m.DB.GetReservationByID(id)
+	if err != nil {
+		helpers.ServerError(w, err)
+	}
+	//put the reservation into a variable so that we can pass it to the template
+	data := make(map[string]interface{})
+	data["reservation"] = reservation
+
+	renders.Template(w, r, "admin-reservations-show.page.gohtml", &models.TemplateData{
+		Data:      data,
+		StringMap: stringMap,
+		Form:      forms.New(nil),
+	})
 }
 
 // AdminPostShowReservation posts a reservation

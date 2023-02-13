@@ -1,0 +1,73 @@
+{{template "admin" .}} <!-- using the base layout template-->
+
+
+{{define "page-title"}}
+    Reservation
+{{end}}
+
+{{define "content"}}
+    <!--holds the reservation and source-->
+    {{$res:= index .Data "reservation"}}
+    {{$src:= index .StringMap "reservation"}}
+    <div class="col-md-12">
+        <p>
+            <strong>Arrival:</strong> {{humanDate $res.StartDate}} <br>
+            <strong>Departure:</strong> {{humanDate $res.EndDate}} <br>
+            <strong>Room:</strong> {{$res.Room.RoomName}} <br>
+
+        </p>
+
+        <form action="/admin/reservations/{{$src}}/{{$res.ID}}" method="post" novalidate class="">
+            <input type="hidden" name="csrf_token" value="{{.CSRFToken}}">
+
+            <div class="form-group">
+                <label for="firstName">First Name</label>
+                {{with .Form.Errors.Get "first_name"}}
+                    <!--want to display something(display whatever the value is from .Form.Errors.Get "first_name") -->
+                    <label class="text-danger"> {{.}} </label>
+
+                {{end}}
+                <input type="text" class="form-control {{with .Form.Errors.Get "first_name"}} is-invalid {{end}}"
+                       id="firstName" name="first_name" value="{{$res.FirstName}}" required />
+            </div>
+
+            <div class="form-group">
+                <label for="lastName">Last name</label>
+                {{with .Form.Errors.Get "last_name"}}
+                    <!--want to display something(display whatever the value is from .Form.Errors.Get "first_name") -->
+                    <label class="text-danger"> {{.}} </label>
+                {{end}}
+                <input type="text" class="form-control {{with .Form.Errors.Get "last_name"}} is-invalid {{end}}"
+                       id="lastName" name="last_name" value="{{$res.LastName}}" required />
+            </div>
+
+
+            <div class="form-group">
+                <label for="Email">Email</label>
+                {{with .Form.Errors.Get "email"}}
+                    <!--want to display something(display whatever the value is from .Form.Errors.Get "first_name") -->
+                    <label class="text-danger"> {{.}} </label>
+                {{end}}
+                <input type="email" class="form-control {{with .Form.Errors.Get "email"}} is-invalid {{end}}"
+                       id="inputEmail" value="{{$res.Email}}" name="email"/>
+            </div>
+
+            <div class="form-group">
+                <label for="phone">Phone Number</label>
+                {{with .Form.Errors.Get "phone"}}
+                    <!--want to display something(display whatever the value is from .Form.Errors.Get "first_name") -->
+                    <label class="text-danger"> {{.}} </label>
+                {{end}}
+                <input type="text" name="phone" class="form-control {{with .Form.Errors.Get "phone"}} is-invalid {{end}}"
+                       id="phone" placeholder="123-4567-890" required value="{{$res.Phone}}" />
+            </div>
+
+            <hr>
+          <!--the cancel button should take us  to where we came from either NewReservation or AllReservation---->
+            <input type="submit" class="btn btn-primary" value="Save">
+    <!--the cancel button should take us  to where we came from either NewReservation or AllReservation---->
+            <a href="/admin/reservations-{{$src}}" class="btn btn-warning">Cancel</a>
+
+        </form>
+    </div>
+{{end}}
